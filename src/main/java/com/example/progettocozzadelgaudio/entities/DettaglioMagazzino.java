@@ -38,4 +38,7 @@ public class DettaglioMagazzino {
     public void setQuantita(int quantita) {
         this.quantita = quantita;
     }
+
+    @Basic
+    private String cazzo;
 }
