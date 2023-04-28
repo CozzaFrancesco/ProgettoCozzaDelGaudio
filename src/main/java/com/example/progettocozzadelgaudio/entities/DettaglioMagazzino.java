@@ -39,6 +39,4 @@ public class DettaglioMagazzino {
         this.quantita = quantita;
     }
 
-    @Basic
-    private String cazzo;
 }
