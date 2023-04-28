@@ -67,7 +67,18 @@ public class Farmacia {
         return citta;
     }
 
-    public void setCitta(String cirt) {
-        this.citta = cirt;
+    public void setCitta(String citta) {
+        this.citta = citta;
+    }
+
+    @OneToOne
+    private Carrello carrello;
+
+    public Carrello getCarrello() {
+        return carrello;
+    }
+
+    public void setCarrello(Carrello carrello) {
+        this.carrello = carrello;
     }
 }
