@@ -39,5 +39,5 @@ public class DettaglioMagazzino {
         this.quantita = quantita;
     }
 
-    private String CAzzo;
+    private String hello;
 }
