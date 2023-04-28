@@ -81,4 +81,15 @@ public class Farmacia {
     public void setCarrello(Carrello carrello) {
         this.carrello = carrello;
     }
+
+    @Basic
+    private String PartitaIva;
+
+    public String getPartitaIva() {
+        return PartitaIva;
+    }
+
+    public void setPartitaIva(String partitaIva) {
+        PartitaIva = partitaIva;
+    }
 }

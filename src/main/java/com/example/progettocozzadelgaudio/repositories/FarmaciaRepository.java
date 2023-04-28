@@ -14,4 +14,6 @@ public interface FarmaciaRepository extends JpaRepository<Farmacia,Integer> {
 
     List<Farmacia> findByCittaAndIndirizzo(String citta, String indirizzo);
 
+    boolean existsByPartitaIva(String pIva);
+
 }

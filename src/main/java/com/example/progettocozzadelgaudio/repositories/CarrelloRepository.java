@@ -10,4 +10,5 @@ public interface CarrelloRepository extends JpaRepository<Carrello,Integer> {
 
     Carrello findByFarmacia(Farmacia f);
 
+    boolean existsByFarmacia(Farmacia f);
 }
