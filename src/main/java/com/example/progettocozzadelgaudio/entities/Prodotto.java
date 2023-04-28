@@ -50,17 +50,6 @@ public class Prodotto {
     }
 
     @Basic
-    private String qta_inStock;
-
-    public String getQta_inStock() {
-        return qta_inStock;
-    }
-
-    public void setQta_inStock(String qta_inStock) {
-        this.qta_inStock = qta_inStock;
-    }
-
-    @Basic
     private String forma_farmaceutica;
 
     public String getForma_farmaceutica() {
@@ -69,5 +58,16 @@ public class Prodotto {
 
     public void setForma_farmaceutica(String forma_farmaceutica) {
         this.forma_farmaceutica = forma_farmaceutica;
+    }
+
+    @Basic
+    private Integer qta_inStock;
+
+    public Integer getQta_inStock() {
+        return qta_inStock;
+    }
+
+    public void setQta_inStock(Integer qta_inStock) {
+        this.qta_inStock = qta_inStock;
     }
 }

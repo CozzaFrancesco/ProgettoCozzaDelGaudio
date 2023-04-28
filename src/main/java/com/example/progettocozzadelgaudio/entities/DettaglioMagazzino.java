@@ -39,5 +39,4 @@ public class DettaglioMagazzino {
         this.quantita = quantita;
     }
 
-    private String hello;
 }
