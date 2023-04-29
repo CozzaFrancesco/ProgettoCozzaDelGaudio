@@ -13,4 +13,6 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
     List<Prodotto> findByNameContaining(String nome);
     List<Prodotto> findByPrincipio_attivo(String principio_attivo);
 
+    List<Prodotto> findById(Long productId);
+
 }
