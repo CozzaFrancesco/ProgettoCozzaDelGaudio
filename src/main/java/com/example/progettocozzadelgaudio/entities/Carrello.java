@@ -1,7 +1,9 @@
 package com.example.progettocozzadelgaudio.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -20,6 +22,7 @@ public class Carrello {
 
 
     @OneToOne(mappedBy = "carrello", optional = false)
+    @JsonIgnore
     private Farmacia farmacia;
 
     public Farmacia getFarmacia() {
@@ -31,7 +34,7 @@ public class Carrello {
     }
 
     @OneToMany
-    private Collection<DettaglioCarrello> dettaglioCarrello;
+    private Collection<DettaglioCarrello> dettaglioCarrello = new ArrayList<>();
 
     public Collection<DettaglioCarrello> getDettaglioCarrello() {
         return dettaglioCarrello;
