@@ -93,4 +93,7 @@ public class Farmacia {
     public void setPartitaIva(String partitaIva) {
         this.partitaIva = partitaIva;
     }
+
+    @Transient
+    private String password;
 }
