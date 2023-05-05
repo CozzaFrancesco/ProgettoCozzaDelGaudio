@@ -23,7 +23,8 @@ public class KeyCloak {
     String username_admin = "admin";
     String password_admin = "admin";
     String nome_client = "sistemaFarmaceutico-client";
-    String ruolo = "user";
+    String ruoloFarmacia = "user";
+    String ruoloGestore="gestore";
     String serverUrl = "http://localhost:8080/auth";
     String realm = "sistemaFarmaceutico-realm";
     String clientId = "admin-client";
@@ -42,13 +43,13 @@ public class KeyCloak {
                 .build();
     }
 
-    public boolean registerUser( Farmacia u ) {
+    public boolean registraFarmacia( String nome, String partitaIva, String password ) {
             try {
                 // Define user
                 UserRepresentation user = new UserRepresentation();
                 user.setEnabled(true);
-                user.setUsername(u.getNome());
-                user.setEmail(u.getPartitaIva()+"@sistemaFarmaceutico.com");
+                user.setUsername(nome);
+                user.setEmail(partitaIva+"@sistemaFarmaceutico.com");
 
                 user.setAttributes(Collections.singletonMap("origin" , Arrays.asList("demo")));
 
@@ -68,7 +69,7 @@ public class KeyCloak {
                 CredentialRepresentation passwordCred = new CredentialRepresentation();
                 passwordCred.setTemporary(true);
                 passwordCred.setType(CredentialRepresentation.PASSWORD);
-                passwordCred.setValue(u.getPassword());
+                passwordCred.setValue(password);
 
                 UserResource userResource = usersRessource.get(userId);
 
@@ -80,7 +81,7 @@ public class KeyCloak {
                 ClientRepresentation app1Client = realmResource.clients().findByClientId(nome_client).get(0);
 //
 //        // Get client level role (requires view-clients role)
-                RoleRepresentation userClientRole = realmResource.clients().get(app1Client.getId()).roles().get(ruolo).toRepresentation();
+                RoleRepresentation userClientRole = realmResource.clients().get(app1Client.getId()).roles().get(ruoloFarmacia).toRepresentation();
 //
 //        // Assign client level role to user
                 userResource.roles().clientLevel(app1Client.getId()).add(Arrays.asList(userClientRole));
@@ -92,9 +93,9 @@ public class KeyCloak {
             }
 
         }
-    public boolean deleteUser( Cliente u ) {
+    public boolean deleteFarmacia(String partitaIva) {
         try{
-            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(u.getEmail()).get(0).getId()).getStatus()==204)
+            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(partitaIva+"sistemaFarmaceutico.com").get(0).getId()).getStatus()==204)
                 return true;
             return false;
         } catch ( IndexOutOfBoundsException e ) {
