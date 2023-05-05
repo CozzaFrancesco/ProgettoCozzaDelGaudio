@@ -28,14 +28,15 @@ public class Prodotto {
     }
 
     @Basic
-    private String principio_attivo;
+    @Column(name = "principio_attivo")
+    private String principioAttivo;
 
-    public String getPrincipio_attivo() {
-        return principio_attivo;
+    public String getprincipioAttivo() {
+        return principioAttivo;
     }
 
-    public void setPrincipio_attivo(String principioAttivo) {
-        this.principio_attivo = principioAttivo;
+    public void setprincipioAttivo(String principioAttivo) {
+        this.principioAttivo = principioAttivo;
     }
 
     @Basic

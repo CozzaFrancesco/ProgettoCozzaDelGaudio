@@ -18,14 +18,14 @@ public class DettaglioMagazzino {
 
 
     @OneToOne(optional = false)
-    private Prodotto Prodotto;
+    private Prodotto prodotto;
 
-    public Prodotto getProdotto() {
-        return Prodotto;
+    public Prodotto getprodotto() {
+        return prodotto;
     }
 
-    public void setProdotto(Prodotto prodotto) {
-        Prodotto = prodotto;
+    public void setprodotto(Prodotto prodotto) {
+        this.prodotto = prodotto;
     }
 
     @Basic

@@ -20,14 +20,14 @@ public class Magazzino {
 
 
     @OneToMany(fetch = FetchType.EAGER)
-    private Collection<DettaglioMagazzino> DettaglioMagazzino;
+    private Collection<DettaglioMagazzino> dettaglioMagazzino;
 
     public Collection<DettaglioMagazzino> getDettaglioMagazzino() {
-        return DettaglioMagazzino;
+        return dettaglioMagazzino;
     }
 
     public void setDettaglioMagazzino(Collection<DettaglioMagazzino> dettaglioMagazzino) {
-        DettaglioMagazzino = dettaglioMagazzino;
+        this.dettaglioMagazzino = dettaglioMagazzino;
     }
 
     @OneToOne(mappedBy = "magazzino", optional = false)

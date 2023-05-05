@@ -83,13 +83,14 @@ public class Farmacia {
     }
 
     @Basic
-    private String PartitaIva;
+    @Column(name="partita_iva")
+    private String partitaIva;
 
     public String getPartitaIva() {
-        return PartitaIva;
+        return partitaIva;
     }
 
     public void setPartitaIva(String partitaIva) {
-        PartitaIva = partitaIva;
+        this.partitaIva = partitaIva;
     }
 }

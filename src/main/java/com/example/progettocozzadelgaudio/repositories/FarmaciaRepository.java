@@ -16,4 +16,6 @@ public interface FarmaciaRepository extends JpaRepository<Farmacia,Integer> {
 
     boolean existsByPartitaIva(String pIva);
 
+    Farmacia findById(Long id);
+
 }
