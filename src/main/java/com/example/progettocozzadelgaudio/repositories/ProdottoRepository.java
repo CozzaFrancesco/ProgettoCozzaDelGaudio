@@ -2,9 +2,13 @@ package com.example.progettocozzadelgaudio.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.LockModeType;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {

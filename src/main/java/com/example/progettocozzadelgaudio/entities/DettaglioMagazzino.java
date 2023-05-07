@@ -20,11 +20,11 @@ public class DettaglioMagazzino {
     @OneToOne(optional = false)
     private Prodotto prodotto;
 
-    public Prodotto getprodotto() {
+    public Prodotto getProdotto() {
         return prodotto;
     }
 
-    public void setprodotto(Prodotto prodotto) {
+    public void setProdotto(Prodotto prodotto) {
         this.prodotto = prodotto;
     }
 
