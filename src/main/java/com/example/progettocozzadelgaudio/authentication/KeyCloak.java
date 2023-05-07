@@ -1,6 +1,7 @@
 package com.example.progettocozzadelgaudio.authentication;
 
 import com.example.progettocozzadelgaudio.entities.Farmacia;
+import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -29,6 +30,8 @@ public class KeyCloak {
     String realm = "sistemaFarmaceutico-realm";
     String clientId = "admin-client";
     String clientSecret = "Sv3fbKEffSofTb5vLJV01Q9yZVailYOd";
+    
+    private static boolean esisteGestore;
 
     public KeyCloak() {
 
@@ -93,7 +96,61 @@ public class KeyCloak {
             }
 
         }
-    public boolean deleteFarmacia(String partitaIva) {
+
+
+    public boolean registraGestore( String nome, String email, String password ) {
+        if(esisteGestore )
+            return false;
+        try {
+            // Define user
+            UserRepresentation user = new UserRepresentation();
+            user.setEnabled(true);
+            user.setUsername(nome);
+            user.setEmail(email);
+
+            user.setAttributes(Collections.singletonMap("origin" , Arrays.asList("demo")));
+
+            // Get realm
+            RealmResource realmResource = keycloak.realm(realm);
+            UsersResource usersRessource = realmResource.users();
+
+            // Create user (requires manage-users role)
+            Response response = usersRessource.create(user);
+            System.out.printf("Response: %s %s%n" , response.getStatus() , response.getStatusInfo());
+            System.out.println(response.getLocation());
+            String userId = CreatedResponseUtil.getCreatedId(response);
+
+            System.out.printf("User created with userId: %s%n" , userId);
+
+            // Define password credential
+            CredentialRepresentation passwordCred = new CredentialRepresentation();
+            passwordCred.setTemporary(true);
+            passwordCred.setType(CredentialRepresentation.PASSWORD);
+            passwordCred.setValue(password);
+
+            UserResource userResource = usersRessource.get(userId);
+
+            // Set password credential
+            userResource.resetPassword(passwordCred);
+
+
+//        // Get client
+            ClientRepresentation app1Client = realmResource.clients().findByClientId(nome_client).get(0);
+//
+//        // Get client level role (requires view-clients role)
+            RoleRepresentation userClientRole = realmResource.clients().get(app1Client.getId()).roles().get(ruoloGestore).toRepresentation();
+//
+//        // Assign client level role to user
+            userResource.roles().clientLevel(app1Client.getId()).add(Arrays.asList(userClientRole));
+            esisteGestore=true;
+            return true;
+        }
+        catch ( WebApplicationException e ){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean eliminaFarmacia(String partitaIva) {
         try{
             if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(partitaIva+"sistemaFarmaceutico.com").get(0).getId()).getStatus()==204)
                 return true;
@@ -101,8 +158,18 @@ public class KeyCloak {
         } catch ( IndexOutOfBoundsException e ) {
             return false;
         }
+    }
 
-
+    public boolean eliminaGestore(String email) {
+        try{
+            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(email).get(0).getId()).getStatus()==204) {
+                esisteGestore=false;
+                return true;
+            }
+            return false;
+        } catch ( IndexOutOfBoundsException e ) {
+            return false;
+        }
     }
 
 }

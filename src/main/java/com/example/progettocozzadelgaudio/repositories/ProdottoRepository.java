@@ -2,6 +2,7 @@ package com.example.progettocozzadelgaudio.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -14,5 +15,15 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
     List<Prodotto> findByPrincipioAttivo(String principioAttivo);
 
     Prodotto findById(Long productId);
+
+    boolean existsByNomeAndFormaFarmaceutica(String nome,String formaFarmaceutica);
+
+    @Query("SELECT p " +
+            "FROM Prodotto p " +
+            "WHERE (p.nome LIKE :nome OR :nome IS NULL) AND " +
+            "      (p.formaFarmaceutica LIKE : formaFarmaceutica OR :formaFarmaceutica IS NULL ) AND " +
+            "      (p.principioAttivo LIKE : principioAttivo OR :principioAttivo IS NULL ) ")
+    List<Prodotto> ricercaAvanzata(String nome, String principioAttivo, String formaFarmaceutica);
+
 
 }

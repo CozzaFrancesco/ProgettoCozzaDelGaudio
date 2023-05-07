@@ -1,6 +1,6 @@
 package com.example.progettocozzadelgaudio.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class DettaglioCarrello {
@@ -8,7 +8,6 @@ public class DettaglioCarrello {
     @Id
     @GeneratedValue
     private Long id;
-
 
     @Basic
     private int quantita;
@@ -30,5 +29,9 @@ public class DettaglioCarrello {
 
     public void setProdotto(Prodotto prodotto) {
         this.prodotto = prodotto;
+    }
+
+    public double getPrezzo() {
+        return prodotto.getPrezzo_unitario()*quantita;
     }
 }

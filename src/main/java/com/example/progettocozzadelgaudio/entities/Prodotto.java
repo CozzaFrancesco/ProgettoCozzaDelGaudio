@@ -1,6 +1,6 @@
 package com.example.progettocozzadelgaudio.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Prodotto {
@@ -40,25 +40,26 @@ public class Prodotto {
     }
 
     @Basic
-    private String prezzo_unitario;
+    private double prezzo_unitario;
 
-    public String getPrezzo_unitario() {
+    public double getPrezzo_unitario() {
         return prezzo_unitario;
     }
 
-    public void setPrezzo_unitario(String prezzo_unitario) {
+    public void setPrezzo_unitario(double prezzo_unitario) {
         this.prezzo_unitario = prezzo_unitario;
     }
 
     @Basic
-    private String forma_farmaceutica;
+    @Column(name="forma_farmaceutica")
+    private String formaFarmaceutica;
 
-    public String getForma_farmaceutica() {
-        return forma_farmaceutica;
+    public String getFormaFarmaceutica() {
+        return formaFarmaceutica;
     }
 
-    public void setForma_farmaceutica(String forma_farmaceutica) {
-        this.forma_farmaceutica = forma_farmaceutica;
+    public void setFormaFarmaceutica(String formaFarmaceutica) {
+        this.formaFarmaceutica = formaFarmaceutica;
     }
 
     @Basic

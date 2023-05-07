@@ -1,7 +1,8 @@
 package com.example.progettocozzadelgaudio.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -20,7 +21,7 @@ public class Magazzino {
 
 
     @OneToMany(fetch = FetchType.EAGER)
-    private Collection<DettaglioMagazzino> dettaglioMagazzino;
+    private Collection<DettaglioMagazzino> dettaglioMagazzino=new ArrayList<>();
 
     public Collection<DettaglioMagazzino> getDettaglioMagazzino() {
         return dettaglioMagazzino;

@@ -1,6 +1,6 @@
 package com.example.progettocozzadelgaudio.entities;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Farmacia {
@@ -94,6 +94,4 @@ public class Farmacia {
         this.partitaIva = partitaIva;
     }
 
-    @Transient
-    private String password;
 }
