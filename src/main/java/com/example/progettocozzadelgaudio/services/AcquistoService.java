@@ -3,6 +3,7 @@ package com.example.progettocozzadelgaudio.services;
 import com.example.progettocozzadelgaudio.authentication.Utils;
 import com.example.progettocozzadelgaudio.entities.*;
 import com.example.progettocozzadelgaudio.repositories.*;
+import com.example.progettocozzadelgaudio.support.exception.BudgetInsufficienteException;
 import com.example.progettocozzadelgaudio.support.exception.QuantitaInsufficienteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,20 +35,25 @@ public class AcquistoService {
     private MagazzinoRepository magazzinoRepository;
 
     @Transactional
-    public Magazzino acquista() throws QuantitaInsufficienteException {
-
+    public Magazzino acquista() throws QuantitaInsufficienteException,BudgetInsufficienteException {
+        double totaleCarrello=0.0;
         String emailFarmacia = Utils.getEmail();
         StringTokenizer st=new StringTokenizer("@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         Carrello carrello=farmacia.getCarrello();
         Collection<DettaglioCarrello> listaDC= carrello.getDettaglioCarrello();
+
         for(DettaglioCarrello dc: listaDC)
         {
             Prodotto prodotto = prodottoRepository.findById(dc.getProdotto().getId());
             if(prodotto.getQta_inStock()<dc.getQuantita())
                 throw new QuantitaInsufficienteException();
+            totaleCarrello=totaleCarrello+dc.getPrezzo();
         }
+
+        if(totaleCarrello > farmacia.getBudget())
+            throw new BudgetInsufficienteException();
 
         for(DettaglioCarrello dc: listaDC)
         {
@@ -75,12 +81,15 @@ public class AcquistoService {
                 dettaglioMagazzinoRepository.save(dettaglioMagazzino);
             }
         }
+
         Magazzino risultato = magazzinoRepository.save(magazzino);
 
         for(DettaglioCarrello dc: listaDC)
             dettaglioCarrelloRepository.delete(dc);
 
         listaDC.clear();
+        farmacia.setBudget(farmacia.getBudget()-totaleCarrello);
+        farmaciaRepository.save(farmacia);
         carrelloRepository.save(carrello);
         return risultato;
     }

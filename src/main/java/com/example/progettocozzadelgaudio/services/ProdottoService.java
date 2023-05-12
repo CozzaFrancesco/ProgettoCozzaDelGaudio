@@ -49,7 +49,7 @@ public class ProdottoService {
     }
 
     @Transactional
-    public Prodotto aggiugiProdotto(String nome, String principioAttivo, double prezzoUnitario, String formaFarmaceutica, Integer qtaInStock) throws ProdottoGiaEsistenteException {
+    public Prodotto aggiungiProdotto(String nome, String principioAttivo, double prezzoUnitario, String formaFarmaceutica, Integer qtaInStock) throws ProdottoGiaEsistenteException {
         if(prodottoRepository.existsByNomeAndFormaFarmaceutica(nome,formaFarmaceutica))
             throw new ProdottoGiaEsistenteException();
 
@@ -57,7 +57,7 @@ public class ProdottoService {
         prodotto.setNome(nome);
         prodotto.setFormaFarmaceutica(formaFarmaceutica);
         prodotto.setPrezzo_unitario(prezzoUnitario);
-        prodotto.setprincipioAttivo(principioAttivo);
+        prodotto.setPrincipioAttivo(principioAttivo);
         prodotto.setQta_inStock(qtaInStock);
 
         return prodottoRepository.save(prodotto);

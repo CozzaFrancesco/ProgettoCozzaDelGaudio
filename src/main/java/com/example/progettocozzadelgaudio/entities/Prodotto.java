@@ -31,11 +31,11 @@ public class Prodotto {
     @Column(name = "principio_attivo")
     private String principioAttivo;
 
-    public String getprincipioAttivo() {
+    public String getPrincipioAttivo() {
         return principioAttivo;
     }
 
-    public void setprincipioAttivo(String principioAttivo) {
+    public void setPrincipioAttivo(String principioAttivo) {
         this.principioAttivo = principioAttivo;
     }
 

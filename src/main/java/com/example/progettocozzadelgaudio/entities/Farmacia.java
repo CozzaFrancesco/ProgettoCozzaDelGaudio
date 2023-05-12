@@ -1,6 +1,8 @@
 package com.example.progettocozzadelgaudio.entities;
 
 import javax.persistence.*;
+import java.time.LocalTime;
+import java.util.Collection;
 
 @Entity
 public class Farmacia {
@@ -94,4 +96,47 @@ public class Farmacia {
         this.partitaIva = partitaIva;
     }
 
+    @Basic
+    private Integer numDipendenti;
+
+    public Integer getNumDipendenti() {
+        return numDipendenti;
+    }
+
+    public void setNumDipendenti(Integer numDipendenti) {
+        this.numDipendenti = numDipendenti;
+    }
+
+    @Basic
+    private LocalTime orarioInizioVisite;
+
+    public LocalTime getOrarioInizioVisite() {
+        return orarioInizioVisite;
+    }
+
+    public void setOrarioInizioVisite(LocalTime orarioInizioVisite) {
+        this.orarioInizioVisite = orarioInizioVisite;
+    }
+
+    @Basic
+    private LocalTime orarioFineVisite;
+
+    public LocalTime getOrarioFineVisite() {
+        return orarioFineVisite;
+    }
+
+    public void setOrarioFineVisite(LocalTime orarioFineVisite) {
+        this.orarioFineVisite = orarioFineVisite;
+    }
+
+    @ManyToMany
+    private Collection<Visita> visite;
+
+    public Collection<Visita> getVisite() {
+        return visite;
+    }
+
+    public void setVisite(Collection<Visita> visite) {
+        this.visite = visite;
+    }
 }
