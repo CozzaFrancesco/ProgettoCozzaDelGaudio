@@ -39,6 +39,7 @@ public class RegistrazioneService {
     private KeyCloak kc=new KeyCloak();
 
 
+    //solo gestore
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public Farmacia registraFarmacia(String nome, String indirizzo, double budget, String citta, String partitaIva, String password ) throws PivaFarmaciaGiaEsistenteException {
         if ( farmaciaRepository.existsByPartitaIva(partitaIva) || ! kc.registraFarmacia(nome,partitaIva,password) ) {
@@ -66,12 +67,14 @@ public class RegistrazioneService {
         return risultato;
     }
 
+    //solo admin
     public void registraGestore(String nome, String email, String password) throws GestoreGiaEsistenteException{
         if(! kc.registraGestore(nome,email,password)) {
             throw new GestoreGiaEsistenteException();
         }
     }
 
+    //solo gestore
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public Cliente registraCliente(String nome, String cognome, String codiceFiscale, int giornoNascita, int meseNascita, int annoNascita, String citta, String indirizzo, String password ) throws CFClienteGiaEsistenteException {
         if ( clienteRepository.existsByCodiceFiscale(codiceFiscale) || ! kc.registraCliente(nome,cognome,codiceFiscale,password) ) {

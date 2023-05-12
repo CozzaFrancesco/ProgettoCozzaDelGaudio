@@ -17,5 +17,5 @@ public interface AppuntamentoRepository extends JpaRepository<Appuntamento,Integ
 
     Collection<Appuntamento> findByFarmaciaAndData(Farmacia farmacia, LocalDate data);
 
-
+    Appuntamento findById(Long idAppuntamento);
 }

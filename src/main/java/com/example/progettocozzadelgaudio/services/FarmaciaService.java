@@ -4,6 +4,7 @@ import com.example.progettocozzadelgaudio.authentication.Utils;
 import com.example.progettocozzadelgaudio.entities.Farmacia;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
+import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.awt.print.Pageable;
 
@@ -23,6 +24,7 @@ public class FarmaciaService {
     @Autowired
     private FarmaciaRepository farmaciaRepository;
 
+    //solo gestore
     @Transactional
     public Farmacia aggiornaBudget(Long id, Double budgetAggiuntivo) {
         Farmacia farmacia=farmaciaRepository.findById(id);
@@ -53,4 +55,23 @@ public class FarmaciaService {
         return farmaciaRepository.save(farmacia);
     }
 
+    //solo gestore
+    @Transactional
+    public Farmacia aggiungiDipendenti(Long idFarmacia, int dipendentiDaAggiungere) throws AggiornamentoFallitoException{
+        if(dipendentiDaAggiungere<0)
+            throw new AggiornamentoFallitoException();
+        Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
+        farmacia.setNumDipendenti(farmacia.getNumDipendenti()+dipendentiDaAggiungere);
+        return farmaciaRepository.save(farmacia);
+    }
+
+    //solo gestore
+    @Transactional
+    public Farmacia rimuoviDipendenti(Long idFarmacia, int dipendentiDaRimuovere) throws AggiornamentoFallitoException{
+        Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
+        if(farmacia.getNumDipendenti()<=dipendentiDaRimuovere)
+            throw new AggiornamentoFallitoException();
+        farmacia.setNumDipendenti(farmacia.getNumDipendenti()-dipendentiDaRimuovere);
+        return farmaciaRepository.save(farmacia);
+    }
 }

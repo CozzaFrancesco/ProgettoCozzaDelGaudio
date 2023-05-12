@@ -1,6 +1,7 @@
 package com.example.progettocozzadelgaudio.services;
 
 import com.example.progettocozzadelgaudio.repositories.ProdottoRepository;
+import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import com.example.progettocozzadelgaudio.support.exception.ProdottoGiaEsistenteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class ProdottoService {
         return prodottoRepository.ricercaAvanzata(nome,principioAttivo,formaFarmaceutica);
     }
 
+    //solo gestore
     @Transactional
     public Prodotto aggiungiProdotto(String nome, String principioAttivo, double prezzoUnitario, String formaFarmaceutica, Integer qtaInStock) throws ProdottoGiaEsistenteException {
         if(prodottoRepository.existsByNomeAndFormaFarmaceutica(nome,formaFarmaceutica))
@@ -63,14 +65,20 @@ public class ProdottoService {
         return prodottoRepository.save(prodotto);
     }
 
+    //solo gestore
     @Transactional
-    public Prodotto aggiornaProdotto(Long id, Integer quantita, double prezzoUnitario){
+    public Prodotto aggiornaProdotto(Long id, Integer quantita, double prezzoUnitario) throws AggiornamentoFallitoException{
+
+        if(quantita < 0 || prezzoUnitario < 0)
+            throw new AggiornamentoFallitoException();
 
         Prodotto prodotto= prodottoRepository.findById(id);
         prodotto.setPrezzo_unitario(prezzoUnitario);
-        prodotto.setQta_inStock(quantita);
+        prodotto.setQta_inStock(prodotto.getQta_inStock()+quantita);
         return prodottoRepository.save(prodotto);
     }
+
+    //solo gestore
     @Transactional
     public void eliminaProdotto(Long id){
         Prodotto prodotto = prodottoRepository.findById(id);

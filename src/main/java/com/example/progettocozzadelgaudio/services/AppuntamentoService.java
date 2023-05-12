@@ -8,6 +8,8 @@ import com.example.progettocozzadelgaudio.entities.Farmacia;
 import com.example.progettocozzadelgaudio.repositories.AppuntamentoRepository;
 import com.example.progettocozzadelgaudio.repositories.ClienteRepository;
 import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
+import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
+import com.example.progettocozzadelgaudio.support.exception.AppuntamentoNonDisdicibileException;
 import com.example.progettocozzadelgaudio.support.exception.AppuntamentoNonPiuDisponibileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class AppuntamentoService {
     @Autowired
     private AppuntamentoRepository appuntamentoRepository;
 
+    @Autowired
+    private VisitaRepository visitaRepository;
+
     private boolean eDisponibile(Farmacia farmacia, Visita visita, int anno, int mese, int giorno, int ora, int minuti) {
         LocalDate data=LocalDate.of(anno,mese,giorno);
         Collection<Appuntamento> listaApp=appuntamentoRepository.findByFarmaciaAndData(farmacia,data);
@@ -50,11 +55,14 @@ public class AppuntamentoService {
     }
 
     @Transactional
-    public Appuntamento creaAppuntamento(Farmacia farmacia, Visita visita, int anno, int mese, int giorno, int ora, int minuti ) throws AppuntamentoNonPiuDisponibileException {
+    public Appuntamento creaAppuntamento(Long idFarmacia, Long idVisita, int anno, int mese, int giorno, int ora, int minuti ) throws AppuntamentoNonPiuDisponibileException {
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer("@");
         String codiceFiscale=st.nextToken();
         Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
+
+        Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
+        Visita visita= visitaRepository.findById(idVisita);
 
         if(!eDisponibile(farmacia,visita,anno,mese,giorno,ora,minuti))
             throw new AppuntamentoNonPiuDisponibileException();
@@ -69,4 +77,15 @@ public class AppuntamentoService {
         return appuntamentoRepository.save(appuntamento);
     }
 
+    @Transactional
+    public void discidiAppuntamento(Long idAppuntamento) throws AppuntamentoNonDisdicibileException{
+        LocalDate dataOdierna=LocalDate.now();
+        Appuntamento appuntamento=appuntamentoRepository.findById(idAppuntamento);
+        if(appuntamento.getData().equals(dataOdierna)
+                || appuntamento.getData().isBefore(dataOdierna)
+                || appuntamento.getData().equals(dataOdierna.plusDays(1)))
+                throw new AppuntamentoNonDisdicibileException();
+
+        appuntamentoRepository.delete(appuntamento);
+    }
 }

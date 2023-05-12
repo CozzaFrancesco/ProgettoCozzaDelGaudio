@@ -32,6 +32,7 @@ public class EliminazioneService {
 
     private KeyCloak kc=new KeyCloak();
 
+    //solo gestore
     @Transactional(readOnly = true)
     public boolean eliminaFarmacia(Long id) {
         Farmacia farmacia=farmaciaRepository.findById(id);
@@ -55,6 +56,7 @@ public class EliminazioneService {
         return true;
     }
 
+    //solo admin
     @Transactional
     public boolean eliminaGestore(String email) {
         return kc.eliminaGestore(email);

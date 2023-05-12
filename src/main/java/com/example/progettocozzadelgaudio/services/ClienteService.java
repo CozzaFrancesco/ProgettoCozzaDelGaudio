@@ -1,12 +1,12 @@
 package com.example.progettocozzadelgaudio.services;
 
-import com.example.progettocozzadelgaudio.entities.Appuntamento;
-import com.example.progettocozzadelgaudio.entities.Farmacia;
-import com.example.progettocozzadelgaudio.entities.Magazzino;
-import com.example.progettocozzadelgaudio.entities.Visita;
+import com.example.progettocozzadelgaudio.authentication.Utils;
+import com.example.progettocozzadelgaudio.entities.*;
 import com.example.progettocozzadelgaudio.repositories.AppuntamentoRepository;
+import com.example.progettocozzadelgaudio.repositories.ClienteRepository;
 import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
 import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
+import com.example.progettocozzadelgaudio.support.exception.DataNonValidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 
 @Service
 public class ClienteService {
@@ -30,6 +31,9 @@ public class ClienteService {
 
     @Autowired
     private AppuntamentoRepository appuntamentoRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     @Transactional
     public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta, int numeroPagina, int dimensionePagina) {
@@ -57,11 +61,16 @@ public class ClienteService {
 
     @Transactional
     public Collection<LocalTime> visulizzaOrariDisponibiliPerVisitainFarmaciaEData(Long idFarmacia, Long idVisita,
-                                                                                   int anno, int mese, int giorno){
+                                                                                   int anno, int mese, int giorno)
+                                                                                    throws DataNonValidaException {
+        LocalDate dataOdierna = LocalDate.now();
+        LocalDate data = LocalDate.of(anno,mese,giorno);
+        if(! data.isAfter(dataOdierna))  //non posso prenotare per il giorno stesso e nemmeno per date passate
+            throw new DataNonValidaException();
+
         Collection<LocalTime> ret=new ArrayList<>();
         Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
         Visita visita= visitaRepository.findById(idVisita);
-        LocalDate data = LocalDate.of(anno,mese,giorno);
         int durataVisita= visita.getDurata();
 
         Collection<Appuntamento> visiteInData = appuntamentoRepository.findByFarmaciaAndData(farmacia,data);
@@ -87,5 +96,14 @@ public class ClienteService {
                 ret.add(app);
         }
         return ret;
+    }
+
+    @Transactional
+    public Collection<Appuntamento> visualizzaAppuntamenti() {
+        String emailCliente = Utils.getEmail();
+        StringTokenizer st=new StringTokenizer("@");
+        String codiceFiscale=st.nextToken();
+        Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
+        return appuntamentoRepository.findByCliente(cliente);
     }
 }
