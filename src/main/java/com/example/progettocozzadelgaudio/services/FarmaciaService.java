@@ -35,7 +35,7 @@ public class FarmaciaService {
     @Transactional
     public Farmacia visualizzaFarmacia() {
         String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         return farmacia;

@@ -57,11 +57,11 @@ public class AppuntamentoService {
     @Transactional
     public Appuntamento creaAppuntamento(Long idFarmacia, Long idVisita, int anno, int mese, int giorno, int ora, int minuti ) throws AppuntamentoNonPiuDisponibileException {
         String emailCliente = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailCliente,"@");
         String codiceFiscale=st.nextToken();
         Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
 
-        Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
+        Farmacia farmacia= farmaciaRepository.findByIdWithLock(idFarmacia);
         Visita visita= visitaRepository.findById(idVisita);
 
         if(!eDisponibile(farmacia,visita,anno,mese,giorno,ora,minuti))

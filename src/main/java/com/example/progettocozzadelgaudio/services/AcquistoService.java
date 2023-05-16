@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.StringTokenizer;
+import javax.persistence.OptimisticLockException;
+import java.util.*;
 
 
 @Service
@@ -38,45 +38,46 @@ public class AcquistoService {
     public Magazzino acquista() throws QuantitaInsufficienteException,BudgetInsufficienteException {
         double totaleCarrello=0.0;
         String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         Carrello carrello=farmacia.getCarrello();
         Collection<DettaglioCarrello> listaDC= carrello.getDettaglioCarrello();
 
+        Map<Prodotto,Integer> prodottiNelCarrello=new HashMap<>();
         for(DettaglioCarrello dc: listaDC)
         {
-            Prodotto prodotto = prodottoRepository.findById(dc.getProdotto().getId());
+            Prodotto prodotto = prodottoRepository.findByIdWithLock(dc.getProdotto().getId());
             if(prodotto.getQta_inStock()<dc.getQuantita())
                 throw new QuantitaInsufficienteException();
+            prodottiNelCarrello.put(prodotto,dc.getQuantita());
             totaleCarrello=totaleCarrello+dc.getPrezzo();
         }
 
         if(totaleCarrello > farmacia.getBudget())
             throw new BudgetInsufficienteException();
 
-        for(DettaglioCarrello dc: listaDC)
+        for(Prodotto p: prodottiNelCarrello.keySet())
         {
-            Prodotto prodotto= prodottoRepository.findById(dc.getProdotto().getId());
-            prodotto.setQta_inStock(prodotto.getQta_inStock()-dc.getQuantita());
-            prodottoRepository.save(prodotto);
+            p.setQta_inStock(p.getQta_inStock()-prodottiNelCarrello.get(p));
+            prodottoRepository.save(p);
         }
 
         Magazzino magazzino= farmacia.getMagazzino();
         Collection<DettaglioMagazzino> listaDM = magazzino.getDettaglioMagazzino();
 
-        for(DettaglioCarrello dc: listaDC) {
+        for(Prodotto p: prodottiNelCarrello.keySet()) {
             boolean trovato=false;
             for (DettaglioMagazzino dm : listaDM)
-                if(dm.getProdotto().getId()==dc.getProdotto().getId()) {
-                    dm.setQuantita(dm.getQuantita() + dc.getQuantita());
+                if(dm.getProdotto().getId()==p.getId()) {
+                    dm.setQuantita(dm.getQuantita() + prodottiNelCarrello.get(p));
                     dettaglioMagazzinoRepository.save(dm);
                     trovato=true;
                 }
             if(!trovato){
                 DettaglioMagazzino dettaglioMagazzino= new DettaglioMagazzino();
-                dettaglioMagazzino.setQuantita(dc.getQuantita());
-                dettaglioMagazzino.setProdotto(dc.getProdotto());
+                dettaglioMagazzino.setQuantita(prodottiNelCarrello.get(p));
+                dettaglioMagazzino.setProdotto(p);
                 magazzino.getDettaglioMagazzino().add(dettaglioMagazzino);
                 dettaglioMagazzinoRepository.save(dettaglioMagazzino);
             }

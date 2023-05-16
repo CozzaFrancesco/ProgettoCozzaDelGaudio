@@ -16,6 +16,17 @@ public class Prodotto {
         this.id = id;
     }
 
+    @Version
+    private long version;
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
     @Basic
     private String nome;
 

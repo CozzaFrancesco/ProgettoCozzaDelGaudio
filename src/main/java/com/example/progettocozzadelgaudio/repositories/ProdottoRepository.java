@@ -20,6 +20,11 @@ public interface ProdottoRepository extends JpaRepository<Prodotto,Integer> {
 
     Prodotto findById(Long productId);
 
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("select p from Prodotto p where p.id=?1")
+    Prodotto findByIdWithLock(Long id);
+
+
     boolean existsByNomeAndFormaFarmaceutica(String nome,String formaFarmaceutica);
 
     @Query("SELECT p " +

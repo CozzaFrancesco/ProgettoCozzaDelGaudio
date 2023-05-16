@@ -15,7 +15,5 @@ public interface VisitaRepository extends JpaRepository<Visita,Integer> {
 
     Visita findById(Long id);
 
-    @Lock(LockModeType.PESSIMISTIC_READ) //to do cambiare tutto quello che serve con questo
-    @Query("select v from Visita v where v.id=?1 ")
-    Visita findByIdWithLock(Long id);
+
 }

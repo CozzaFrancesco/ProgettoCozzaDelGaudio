@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 
+import javax.persistence.OptimisticLockException;
+
 @Service
 public class ProdottoService {
 
@@ -65,6 +67,10 @@ public class ProdottoService {
         return prodottoRepository.save(prodotto);
     }
 
+    @Transactional
+    public Prodotto trovaProdottoDaId(Long id) {
+        return prodottoRepository.findById(id);
+    }
     //solo gestore
     @Transactional
     public Prodotto aggiornaProdotto(Long id, Integer quantita, double prezzoUnitario) throws AggiornamentoFallitoException{
@@ -72,20 +78,18 @@ public class ProdottoService {
         if(quantita < 0 || prezzoUnitario < 0)
             throw new AggiornamentoFallitoException();
 
-        Prodotto prodotto= prodottoRepository.findById(id);
+        Prodotto prodotto= prodottoRepository.findByIdWithLock(id);
         prodotto.setPrezzo_unitario(prezzoUnitario);
         prodotto.setQta_inStock(prodotto.getQta_inStock()+quantita);
         return prodottoRepository.save(prodotto);
     }
 
-    //solo gestore
+    /*
+    //solo gestore: GESTIRE
     @Transactional
     public void eliminaProdotto(Long id){
         Prodotto prodotto = prodottoRepository.findById(id);
         prodottoRepository.delete(prodotto);
     }
-
-
-
-
+    */
 }

@@ -37,7 +37,7 @@ public class CarrelloService {
 
     public Collection<DettaglioCarrello> visualizzaCarrello() {
         String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         Carrello carrello=farmacia.getCarrello();
@@ -53,7 +53,7 @@ public class CarrelloService {
 
         boolean giaInCarrello=false;
         String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         Carrello carrello=farmacia.getCarrello();
@@ -83,12 +83,12 @@ public class CarrelloService {
     }
 
     @Transactional
-    public Carrello modificaCarrello(Long idProdotto, Integer quantita) {
+    public Carrello modificaCarrello(Long idProdotto, Integer quantita) throws QuantitaInsufficienteException{
         Prodotto prodotto=prodottoRepository.findById(idProdotto);
         boolean trovatoDC=false;
 
         String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
         Carrello carrello=farmacia.getCarrello();
@@ -100,12 +100,13 @@ public class CarrelloService {
         while(it.hasNext() && !trovatoDC) {
             dc = it.next();
             if (dc.getProdotto().getId() == idProdotto) {
+                if(quantita > 0 && dc.getProdotto().getQta_inStock() < dc.getQuantita()+quantita)
+                    throw new QuantitaInsufficienteException();
                 dc.setQuantita(dc.getQuantita() + quantita);
                 trovatoDC=true;
             }
         }
 
-        dc.setQuantita(quantita);
         if(dc.getQuantita()==0) {
             listaDC.remove(dc);
             dettaglioCarrelloRepository.delete(dc);

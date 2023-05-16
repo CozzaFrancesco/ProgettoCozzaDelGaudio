@@ -60,7 +60,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public Collection<LocalTime> visulizzaOrariDisponibiliPerVisitainFarmaciaEData(Long idFarmacia, Long idVisita,
+    public Collection<LocalTime> visualizzaOrariDisponibiliPerVisitainFarmaciaEData(Long idFarmacia, Long idVisita,
                                                                                    int anno, int mese, int giorno)
                                                                                     throws DataNonValidaException {
         LocalDate dataOdierna = LocalDate.now();
@@ -101,7 +101,7 @@ public class ClienteService {
     @Transactional
     public Collection<Appuntamento> visualizzaAppuntamenti() {
         String emailCliente = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer("@");
+        StringTokenizer st=new StringTokenizer(emailCliente,"@");
         String codiceFiscale=st.nextToken();
         Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
         return appuntamentoRepository.findByCliente(cliente);
