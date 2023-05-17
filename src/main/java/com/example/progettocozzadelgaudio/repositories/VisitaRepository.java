@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.example.progettocozzadelgaudio.entities.Visita;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 import java.util.Collection;
 
 @Repository

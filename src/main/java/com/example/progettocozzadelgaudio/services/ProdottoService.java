@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 
-import javax.persistence.OptimisticLockException;
+import jakarta.persistence.OptimisticLockException;
 
 @Service
 public class ProdottoService {

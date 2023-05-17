@@ -1,6 +1,6 @@
 package com.example.progettocozzadelgaudio.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class DettaglioMagazzino {
