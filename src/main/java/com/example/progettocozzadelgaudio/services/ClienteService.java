@@ -36,11 +36,10 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     @Transactional
-    public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta, int numeroPagina, int dimensionePagina) {
-        Pageable paging = (Pageable) PageRequest.of(numeroPagina, dimensionePagina);
-        List<Farmacia> pagedResult = farmaciaRepository.findAllByCitta(citta, paging);
-        if ( !pagedResult.isEmpty() ) {
-            return pagedResult;
+    public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta){
+        List<Farmacia> risultato = farmaciaRepository.findAllByCitta(citta);
+        if ( !risultato.isEmpty() ) {
+            return risultato;
         }
         else {
             return new ArrayList<>();

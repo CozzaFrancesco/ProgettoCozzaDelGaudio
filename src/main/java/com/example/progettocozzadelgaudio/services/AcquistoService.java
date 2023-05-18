@@ -48,7 +48,7 @@ public class AcquistoService {
         for(DettaglioCarrello dc: listaDC)
         {
             Prodotto prodotto = prodottoRepository.findByIdWithLock(dc.getProdotto().getId());
-            if(prodotto.getQta_inStock()<dc.getQuantita())
+            if(prodotto.getQtaInStock()<dc.getQuantita())
                 throw new QuantitaInsufficienteException();
             prodottiNelCarrello.put(prodotto,dc.getQuantita());
             totaleCarrello=totaleCarrello+dc.getPrezzo();
@@ -59,7 +59,7 @@ public class AcquistoService {
 
         for(Prodotto p: prodottiNelCarrello.keySet())
         {
-            p.setQta_inStock(p.getQta_inStock()-prodottiNelCarrello.get(p));
+            p.setQtaInStock(p.getQtaInStock()-prodottiNelCarrello.get(p));
             prodottoRepository.save(p);
         }
 

@@ -48,7 +48,7 @@ public class CarrelloService {
     public Carrello aggiungiAlCarrello(Long idProdotto, Integer quantita) throws QuantitaInsufficienteException{
         Prodotto prodotto=prodottoRepository.findById(idProdotto);
 
-        if(prodotto.getQta_inStock()<quantita)
+        if(prodotto.getQtaInStock()<quantita)
             throw new QuantitaInsufficienteException();
 
         boolean giaInCarrello=false;
@@ -100,7 +100,7 @@ public class CarrelloService {
         while(it.hasNext() && !trovatoDC) {
             dc = it.next();
             if (dc.getProdotto().getId() == idProdotto) {
-                if(quantita > 0 && dc.getProdotto().getQta_inStock() < dc.getQuantita()+quantita)
+                if(quantita > 0 && dc.getProdotto().getQtaInStock() < dc.getQuantita()+quantita)
                     throw new QuantitaInsufficienteException();
                 dc.setQuantita(dc.getQuantita() + quantita);
                 trovatoDC=true;

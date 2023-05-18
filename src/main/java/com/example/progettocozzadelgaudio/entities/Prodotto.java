@@ -51,14 +51,15 @@ public class Prodotto {
     }
 
     @Basic
-    private double prezzo_unitario;
+    @Column(name="prezzo_unitario")
+    private double prezzoUnitario;
 
-    public double getPrezzo_unitario() {
-        return prezzo_unitario;
+    public double getPrezzoUnitario() {
+        return prezzoUnitario;
     }
 
-    public void setPrezzo_unitario(double prezzo_unitario) {
-        this.prezzo_unitario = prezzo_unitario;
+    public void setPrezzoUnitario(double prezzoUnitario) {
+        this.prezzoUnitario = prezzoUnitario;
     }
 
     @Basic
@@ -74,13 +75,14 @@ public class Prodotto {
     }
 
     @Basic
-    private Integer qta_inStock;
+    @Column(name = "qta_inStock")
+    private Integer qtaInStock;
 
-    public Integer getQta_inStock() {
-        return qta_inStock;
+    public Integer getQtaInStock() {
+        return qtaInStock;
     }
 
-    public void setQta_inStock(Integer qta_inStock) {
-        this.qta_inStock = qta_inStock;
+    public void setQtaInStock(Integer qtaInStock) {
+        this.qtaInStock = qtaInStock;
     }
 }

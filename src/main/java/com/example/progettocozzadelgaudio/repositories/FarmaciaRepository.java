@@ -24,7 +24,7 @@ public interface FarmaciaRepository extends JpaRepository<Farmacia,Integer> {
 
     Farmacia findByPartitaIva(String partitaIva);
 
-    List<Farmacia> findAllByCitta(String citta, Pageable paging);
+    List<Farmacia> findAllByCitta(String citta);
 
     boolean existsByPartitaIva(String pIva);
 
