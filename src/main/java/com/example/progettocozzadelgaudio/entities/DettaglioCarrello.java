@@ -32,6 +32,6 @@ public class DettaglioCarrello {
     }
 
     public double getPrezzo() {
-        return prodotto.getPrezzo_unitario()*quantita;
+        return prodotto.getPrezzoUnitario()*quantita;
     }
 }

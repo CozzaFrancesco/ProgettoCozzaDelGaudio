@@ -60,9 +60,9 @@ public class ProdottoService {
         Prodotto prodotto= new Prodotto();
         prodotto.setNome(nome);
         prodotto.setFormaFarmaceutica(formaFarmaceutica);
-        prodotto.setPrezzo_unitario(prezzoUnitario);
+        prodotto.setPrezzoUnitario(prezzoUnitario);
         prodotto.setPrincipioAttivo(principioAttivo);
-        prodotto.setQta_inStock(qtaInStock);
+        prodotto.setQtaInStock(qtaInStock);
 
         return prodottoRepository.save(prodotto);
     }
@@ -79,8 +79,8 @@ public class ProdottoService {
             throw new AggiornamentoFallitoException();
 
         Prodotto prodotto= prodottoRepository.findByIdWithLock(id);
-        prodotto.setPrezzo_unitario(prezzoUnitario);
-        prodotto.setQta_inStock(prodotto.getQta_inStock()+quantita);
+        prodotto.setPrezzoUnitario(prezzoUnitario);
+        prodotto.setQtaInStock(prodotto.getQtaInStock()+quantita);
         return prodottoRepository.save(prodotto);
     }
 
