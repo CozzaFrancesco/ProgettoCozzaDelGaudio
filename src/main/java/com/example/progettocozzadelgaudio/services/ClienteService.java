@@ -8,11 +8,13 @@ import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
 import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
 import com.example.progettocozzadelgaudio.support.exception.DataNonValidaException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -35,8 +37,20 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Transactional(readOnly = true)
+    public List<Farmacia> visualizzaFarmacie(int numeroPagina, int dimensionePagina, String sortBy) {
+        Pageable paging = PageRequest.of(numeroPagina, dimensionePagina, Sort.by(sortBy));
+        Page<Farmacia> pagedResult = farmaciaRepository.findAll(paging);
+        if ( pagedResult.hasContent() ) {
+            return pagedResult.getContent();
+        }
+        else {
+            return new ArrayList<>();
+        }
+    }
+
     @Transactional
-    public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta){
+    public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta) {
         List<Farmacia> risultato = farmaciaRepository.findAllByCitta(citta);
         if ( !risultato.isEmpty() ) {
             return risultato;
@@ -105,4 +119,33 @@ public class ClienteService {
         Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
         return appuntamentoRepository.findByCliente(cliente);
     }
+
+    @Transactional
+    public Cliente visualizzaCliente(){
+        String emailCliente = Utils.getEmail();
+        StringTokenizer st=new StringTokenizer(emailCliente,"@");
+        String codiceFiscale=st.nextToken();
+        return clienteRepository.findByCodiceFiscale(codiceFiscale);
+    }
+
+    @Transactional
+    public Cliente modificaCitta(String citta){
+        String emailCliente = Utils.getEmail();
+        StringTokenizer st=new StringTokenizer(emailCliente,"@");
+        String codiceFiscale=st.nextToken();
+        Cliente cliente= clienteRepository.findByCodiceFiscale(codiceFiscale);
+        cliente.setCitta(citta);
+        return clienteRepository.save(cliente);
+    }
+
+    @Transactional
+    public Cliente modificaIndirizzo(String indirizzo){
+        String emailCliente = Utils.getEmail();
+        StringTokenizer st=new StringTokenizer(emailCliente,"@");
+        String codiceFiscale=st.nextToken();
+        Cliente cliente= clienteRepository.findByCodiceFiscale(codiceFiscale);
+        cliente.setIndirizzo(indirizzo);
+        return clienteRepository.save(cliente);
+    }
 }
+

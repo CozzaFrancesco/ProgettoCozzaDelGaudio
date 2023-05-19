@@ -11,8 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/prodotti")
@@ -23,19 +23,30 @@ public class ProdottiController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('farmacia') or hasAuthority('gestore')")
-    public Collection<Prodotto> visualizzaProdotti(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize, @RequestParam(value = "sortBy", defaultValue = "id") String sortBy) {
+    public ResponseEntity visualizzaProdotti(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
+                                             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                             @RequestParam(value = "sortBy", defaultValue = "id") String sortBy) {
         List<Prodotto> risultato = prodottoService.mostraTuttiProdotti(pageNumber, pageSize, sortBy);
-        return risultato;
+        return new ResponseEntity(risultato,HttpStatus.OK);
+    }
+
+    //non ne sono certo
+    @GetMapping("/ricercaAvanzata{nome}/{principioAttivo}/{formaFarmaceutica}")
+    @PreAuthorize("hasAuthority('farmacia') or hasAuthority('gestore')")
+    public ResponseEntity visualizzaProdottiAvanzata(@PathVariable(required = false) Map<String, String> variabiliPath){
+        List<Prodotto> risultato= prodottoService.trovaProdottoConRicercaAvanzata(variabiliPath.get("nome"),
+                variabiliPath.get("principioAttivo"),variabiliPath.get("formaFarmaceutica"));
+                //i campi possono anche non essere tutti presenti, o tutti null
+        return new ResponseEntity(risultato,HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('gestore')")
-    public ResponseEntity aggiungiProdotto(@RequestBody @Valid String nome, @RequestBody @Valid String principioAttivo,
-                                           @RequestBody @Valid double prezzoUnitario, @RequestBody @Valid String formaFarmaceutica,
-                                           @RequestBody @Valid Integer qtaInStock) {
+    public ResponseEntity aggiungiProdotto(@RequestBody @Valid Prodotto prodotto) {
         try {
-            Prodotto prodotto = prodottoService.aggiungiProdotto(nome, principioAttivo, prezzoUnitario, formaFarmaceutica, qtaInStock);
-            return new ResponseEntity(prodotto,HttpStatus.OK);
+            Prodotto risultato = prodottoService.aggiungiProdotto(prodotto.getNome(),prodotto.getPrincipioAttivo(),
+                    prodotto.getPrezzoUnitario(),prodotto.getFormaFarmaceutica(),prodotto.getQtaInStock());
+            return new ResponseEntity(risultato,HttpStatus.OK);
         }catch(ProdottoGiaEsistenteException e) {
             return new ResponseEntity("ERROR_PRODUCT_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
         }
@@ -43,19 +54,20 @@ public class ProdottiController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('farmacia') or hasAuthority('gestore')")
-    public Prodotto visualizzaProdotto(@Valid @PathVariable("id") Long id) {
-        return prodottoService.trovaProdottoDaId(id);
+    public ResponseEntity visualizzaProdotto(@Valid @PathVariable("id") Long id) {
+        Prodotto ret = prodottoService.trovaProdottoDaId(id);
+        return new ResponseEntity(ret,HttpStatus.OK);
     }
 
     @PutMapping("/{id}/aggiorna")
     @PreAuthorize("hasAuthority('gestore')")
-    public ResponseEntity modifica(@Valid @PathVariable("id") Long id, @Valid @RequestBody int quantita, @Valid @RequestBody double prezzo) {
+    public ResponseEntity modifica(@Valid @PathVariable("id") Long id,
+                                   @Valid @RequestBody Map<String,String> modificaMap){
         try {
-            return new ResponseEntity(prodottoService.aggiornaProdotto(id, quantita, prezzo),HttpStatus.OK);
+            return new ResponseEntity(prodottoService.aggiornaProdotto(id, Integer.parseInt(modificaMap.get("qta")),
+                    Double.parseDouble(modificaMap.get("prezzo"))),HttpStatus.OK);
         }catch(AggiornamentoFallitoException e){
             return new ResponseEntity("ERROR_UPDATING_FAILED",HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }

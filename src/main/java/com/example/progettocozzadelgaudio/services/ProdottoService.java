@@ -5,18 +5,15 @@ import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallito
 import com.example.progettocozzadelgaudio.support.exception.ProdottoGiaEsistenteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 
-import jakarta.persistence.OptimisticLockException;
 
 @Service
 public class ProdottoService {
@@ -84,12 +81,4 @@ public class ProdottoService {
         return prodottoRepository.save(prodotto);
     }
 
-    /*
-    //solo gestore: GESTIRE
-    @Transactional
-    public void eliminaProdotto(Long id){
-        Prodotto prodotto = prodottoRepository.findById(id);
-        prodottoRepository.delete(prodotto);
-    }
-    */
 }

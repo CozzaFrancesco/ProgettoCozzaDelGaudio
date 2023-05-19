@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/Registrazione")
 public class RegistrazioneController {
@@ -24,11 +26,10 @@ public class RegistrazioneController {
     @Autowired
     RegistrazioneService registrazioneService;
     @PostMapping("/farmacia")
-    public ResponseEntity registraFarmacia(@RequestBody @Valid String nome, @RequestBody @Valid String indirizzo,
-                                           @RequestBody @Valid double budget, @RequestBody @Valid String citta,
-                                           @RequestBody @Valid String partitaIva, @RequestBody @Valid String password ){
+    public ResponseEntity registraFarmacia(@RequestBody @Valid Map<String,String> loginMap ){
         try{
-            Farmacia farmacia=registrazioneService.registraFarmacia(nome,indirizzo,budget,citta,partitaIva,password);
+            Farmacia farmacia=registrazioneService.registraFarmacia(loginMap.get("nome"),loginMap.get("indirizzo"),
+                    Double.parseDouble(loginMap.get("budget")),loginMap.get("citta"),loginMap.get("partitaIva"),loginMap.get("password"));
             return new ResponseEntity<>(farmacia,HttpStatus.OK);
         }catch(PivaFarmaciaGiaEsistenteException e){
             return new ResponseEntity<>("ERROR_MAIL_PHARMACY_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
@@ -36,27 +37,12 @@ public class RegistrazioneController {
     }
 
     @PostMapping("/cliente")
-    public ResponseEntity registraCliente(@RequestBody @Valid String nome,@RequestBody @Valid String cognome, @RequestBody @Valid  String codiceFiscale,
-                                          @RequestBody @Valid int giornoNascita, @RequestBody @Valid int meseNascita,
-                                          @RequestBody @Valid int annoNascita, @RequestBody @Valid String citta,
-                                          @RequestBody @Valid String indirizzo, @RequestBody @Valid  String password ){
+    public ResponseEntity registraCliente(@RequestBody @Valid  Map<String,String> loginMap){
         try{
-            Cliente cliente=registrazioneService.registraCliente(nome,cognome,codiceFiscale,giornoNascita,meseNascita,annoNascita,citta,indirizzo,password);
+            Cliente cliente=registrazioneService.registraCliente(loginMap.get("nome"),loginMap.get("cognome"),loginMap.get("codiceFiscale"),Integer.parseInt("giornoNascita"),Integer.parseInt(loginMap.get("meseNascita")),Integer.parseInt("annoNascita"),loginMap.get("citta"),loginMap.get("indirizzo"),loginMap.get("password"));
             return new ResponseEntity<>(cliente,HttpStatus.OK);
         }catch(CFClienteGiaEsistenteException e){
             return new ResponseEntity<>("ERROR_MAIL_USER_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("/gestore")
-    @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity registraGestre(@RequestBody @Valid String nome, @RequestBody @Valid String email,
-                                         @RequestBody @Valid String password) {
-        try {
-            registrazioneService.registraGestore(nome,email,password);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch(GestoreGiaEsistenteException e) {
-            return new ResponseEntity<>("ERROR_MANAGER_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
         }
     }
 }

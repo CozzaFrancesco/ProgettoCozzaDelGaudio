@@ -3,6 +3,7 @@ package com.example.progettocozzadelgaudio.controllers;
 import com.example.progettocozzadelgaudio.authentication.Utils;
 import com.example.progettocozzadelgaudio.entities.Carrello;
 import com.example.progettocozzadelgaudio.entities.DettaglioCarrello;
+import com.example.progettocozzadelgaudio.entities.Prodotto;
 import com.example.progettocozzadelgaudio.services.AcquistoService;
 import com.example.progettocozzadelgaudio.services.CarrelloService;
 import com.example.progettocozzadelgaudio.support.exception.BudgetInsufficienteException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.Collection;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 @RestController
@@ -29,15 +31,16 @@ public class CarrelloController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('farmacia')")
-    public Collection<DettaglioCarrello> visualizzaCarrello() {
-        return carrelloService.visualizzaCarrello();
+    public ResponseEntity visualizzaCarrello() {
+        Collection<DettaglioCarrello> ret = carrelloService.visualizzaCarrello();
+        return new ResponseEntity(ret,HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('farmacia')")
-    public ResponseEntity aggiungiAlCarrello(@Valid @RequestBody Long idProdotto,@Valid @RequestBody int quantita) {
+    public ResponseEntity aggiungiAlCarrello(@Valid @RequestBody Map<String,String> prodQta) {
         try{
-            return new ResponseEntity(carrelloService.aggiungiAlCarrello(idProdotto,quantita),HttpStatus.OK);
+            return new ResponseEntity(carrelloService.aggiungiAlCarrello(Long.parseLong(prodQta.get("idProdotto")),Integer.parseInt(prodQta.get("qta"))),HttpStatus.OK);
         }catch (QuantitaInsufficienteException e){
             return new ResponseEntity("ERROR_QUANTITY_NOT_ENOUGH", HttpStatus.BAD_REQUEST);
         }
@@ -45,9 +48,9 @@ public class CarrelloController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('farmacia')")
-    public ResponseEntity modificaCarrello(@Valid @RequestBody Long idProdotto,@Valid @RequestBody int quantita) { //quantita in meno o in piu
+    public ResponseEntity modificaCarrello(@Valid @RequestBody Map<String,String> prodQta) { //quantita in meno o in piu
         try{
-            return new ResponseEntity(carrelloService.modificaCarrello(idProdotto,quantita),HttpStatus.OK);
+            return new ResponseEntity(carrelloService.modificaCarrello(Long.parseLong(prodQta.get("idProdotto")),Integer.parseInt(prodQta.get("qta"))),HttpStatus.OK);
         }catch (QuantitaInsufficienteException e){
             return new ResponseEntity("ERROR_QUANTITY_NOT_ENOUGH", HttpStatus.BAD_REQUEST);
         }
@@ -55,10 +58,10 @@ public class CarrelloController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('farmacia')")
-    public ResponseEntity eliminaProdottoInCarrello(@Valid @RequestBody Long idProdotto) {
+    public ResponseEntity eliminaProdottoInCarrello(@Valid @RequestBody Prodotto prodotto) {
         try{
             int quantitaPerEliminazione=0;
-            return new ResponseEntity(carrelloService.modificaCarrello(idProdotto,quantitaPerEliminazione),HttpStatus.OK);
+            return new ResponseEntity(carrelloService.modificaCarrello(prodotto.getId(),quantitaPerEliminazione),HttpStatus.OK);
         }catch (QuantitaInsufficienteException e){
             return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
         }
