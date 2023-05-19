@@ -58,6 +58,12 @@ public class GestioneFarmaciaController {
         return new ResponseEntity(clienteService.visualizzaMagazzinoPerFarmacia(idFarmacia),HttpStatus.OK);
     }
 
+    @GetMapping("/{idFarmacia}/magazzino/{nome}")
+    @PreAuthorize("hasAuthority('cliente')") //qui si ritorna una lista di dettaglio magazzino
+    public ResponseEntity visualizzaMagazzinoFarmaciaPerNome(@PathVariable @Valid Long idFarmacia,@PathVariable @Valid String nome) {
+        return new ResponseEntity(clienteService.visualizzaMagazzinoPerFarmaciaENomeProdotto(idFarmacia,nome),HttpStatus.OK);
+    }
+
     @GetMapping("/{idFarmacia}/{idVisita}/{data}/orariDisponibili")
     @PreAuthorize("hasAuthority('cliente')")
     public ResponseEntity orariDisponibiliPerVisitaFarmacia(@PathVariable @Valid Long idFarmacia,

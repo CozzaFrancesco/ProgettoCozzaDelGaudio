@@ -42,7 +42,7 @@ public class FarmaciaController {
     @PutMapping("/modificaIndirizzo")
     @PreAuthorize("hasAuthority('farmacia')")
     public ResponseEntity modificaIndirizzo(@RequestBody @Valid Map<String,String> indirizzo) {
-        Farmacia farmacia=farmaciaService.modificaNomeFarmacia(indirizzo.get("nuovoIndirizzo"));
+        Farmacia farmacia=farmaciaService.modificaIndirizzoFarmacia(indirizzo.get("nuovoIndirizzo"));
         return new ResponseEntity(farmacia,HttpStatus.OK);
     }
 
@@ -56,5 +56,17 @@ public class FarmaciaController {
     @PreAuthorize("hasAuthority('farmacia')")
     public ResponseEntity visualizzaMagazzino() {
         return new ResponseEntity(magazzinoService.visualizzaMagazzino(),HttpStatus.OK);
+    }
+
+    @GetMapping("/magazzino/{nome}")
+    @PreAuthorize("hasAuthority('farmacia')")
+    public ResponseEntity visualizzaMagazzinoPerNome(@PathVariable @Valid String nome) {
+        return new ResponseEntity(magazzinoService.visualizzaMagazzinoPerNome(nome),HttpStatus.OK);
+    }
+
+    @GetMapping("/magazzino/{principioAttivo}")
+    @PreAuthorize("hasAuthority('farmacia')")
+    public ResponseEntity visualizzaMagazzinoPerPrincipioAttivo(@PathVariable @Valid String principioAttivo) {
+        return new ResponseEntity(magazzinoService.visualizzaMagazzinoPerPrincipioAttivo(principioAttivo),HttpStatus.OK);
     }
 }

@@ -39,7 +39,7 @@ public class ClienteController {
     @PutMapping("/modificaIndirizzo")
     @PreAuthorize("hasAuthority('cliente')")
     public ResponseEntity modificaIndirizo(Map<String,String > indirizzo){
-        return new ResponseEntity<>(clienteService.modificaCitta(indirizzo.get("indirizzo")),HttpStatus.OK);
+        return new ResponseEntity<>(clienteService.modificaIndirizzo(indirizzo.get("indirizzo")),HttpStatus.OK);
     }
 
     @GetMapping("/prenotazioni")

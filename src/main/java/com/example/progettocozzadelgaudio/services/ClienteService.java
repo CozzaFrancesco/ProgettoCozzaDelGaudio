@@ -2,10 +2,7 @@ package com.example.progettocozzadelgaudio.services;
 
 import com.example.progettocozzadelgaudio.authentication.Utils;
 import com.example.progettocozzadelgaudio.entities.*;
-import com.example.progettocozzadelgaudio.repositories.AppuntamentoRepository;
-import com.example.progettocozzadelgaudio.repositories.ClienteRepository;
-import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
-import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
+import com.example.progettocozzadelgaudio.repositories.*;
 import com.example.progettocozzadelgaudio.support.exception.DataNonValidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +34,9 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private DettaglioMagazzinoRepository dettaglioMagazzinoRepository;
+
     @Transactional(readOnly = true)
     public List<Farmacia> visualizzaFarmacie(int numeroPagina, int dimensionePagina, String sortBy) {
         Pageable paging = PageRequest.of(numeroPagina, dimensionePagina, Sort.by(sortBy));
@@ -64,6 +64,17 @@ public class ClienteService {
     public Magazzino visualizzaMagazzinoPerFarmacia(Long idFarmacia) {
         Farmacia farmacia=farmaciaRepository.findById(idFarmacia);
         return farmacia.getMagazzino();
+    }
+
+    @Transactional
+    public Collection<DettaglioMagazzino> visualizzaMagazzinoPerFarmaciaENomeProdotto(Long idFarmacia, String nome) {
+        Farmacia farmacia=farmaciaRepository.findById(idFarmacia);
+        Collection<DettaglioMagazzino> ret = new ArrayList<>();
+        Collection<DettaglioMagazzino> listaDM= farmacia.getMagazzino().getDettaglioMagazzino();
+        for(DettaglioMagazzino dm: listaDM )
+            if(dm.getProdotto().getNome().equals(nome))
+                ret.add(dm);
+        return ret;
     }
 
     @Transactional
