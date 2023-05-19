@@ -31,9 +31,9 @@ public class ProdottiController {
     }
 
     //non ne sono certo
-    @GetMapping("/ricercaAvanzata{nome}/{principioAttivo}/{formaFarmaceutica}")
+    @GetMapping("/ricercaAvanzata")
     @PreAuthorize("hasAuthority('farmacia') or hasAuthority('gestore')")
-    public ResponseEntity visualizzaProdottiAvanzata(@PathVariable(required = false) Map<String, String> variabiliPath){
+    public ResponseEntity visualizzaProdottiAvanzata(@RequestParam(required = false) Map<String, String> variabiliPath){
         List<Prodotto> risultato= prodottoService.trovaProdottoConRicercaAvanzata(variabiliPath.get("nome"),
                 variabiliPath.get("principioAttivo"),variabiliPath.get("formaFarmaceutica"));
                 //i campi possono anche non essere tutti presenti, o tutti null
