@@ -2,6 +2,7 @@ package com.example.progettocozzadelgaudio.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -130,7 +131,7 @@ public class Farmacia {
     }
 
     @ManyToMany
-    private Collection<Visita> visite;
+    private Collection<Visita> visite=new ArrayList<>();
 
     public Collection<Visita> getVisite() {
         return visite;

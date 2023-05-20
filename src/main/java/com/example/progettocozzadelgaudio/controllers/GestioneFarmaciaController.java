@@ -45,12 +45,6 @@ public class GestioneFarmaciaController {
         return new ResponseEntity(clienteService.visualizzaFarmaciePerCitta(citta), HttpStatus.OK);
     }
 
-    @GetMapping("/{idFarmacia}/visite")
-    @PreAuthorize("hasAuthority('cliente')")
-    public ResponseEntity visualizzaVisiteFarmacia(@PathVariable @Valid Long idFarmacia) {
-        return new ResponseEntity(clienteService.visualizzaVisitePerFarmacia(idFarmacia),HttpStatus.OK);
-    }
-
 
     @GetMapping("/{idFarmacia}/magazzino")
     @PreAuthorize("hasAuthority('cliente')")
@@ -64,7 +58,13 @@ public class GestioneFarmaciaController {
         return new ResponseEntity(clienteService.visualizzaMagazzinoPerFarmaciaENomeProdotto(idFarmacia,nome),HttpStatus.OK);
     }
 
-    @GetMapping("/{idFarmacia}/{idVisita}/{data}/orariDisponibili")
+    @GetMapping("/{idFarmacia}/visite")
+    @PreAuthorize("hasAuthority('cliente')")
+    public ResponseEntity visualizzaVisiteFarmacia(@PathVariable @Valid Long idFarmacia) {
+        return new ResponseEntity(clienteService.visualizzaVisitePerFarmacia(idFarmacia),HttpStatus.OK);
+    }
+
+    @GetMapping("/{idFarmacia}/visite/{idVisita}/{data}/orariDisponibili")
     @PreAuthorize("hasAuthority('cliente')")
     public ResponseEntity orariDisponibiliPerVisitaFarmacia(@PathVariable @Valid Long idFarmacia,
                                                             @PathVariable @Valid Long idVisita,
@@ -76,7 +76,7 @@ public class GestioneFarmaciaController {
         }
     }
 
-    @PostMapping("/{idFarmacia}/{idVisita}/{data}/{orario}/prenota")
+    @PostMapping("/{idFarmacia}/visite/{idVisita}/{data}/{orario}/prenota")
     @PreAuthorize("hasAuthority('cliente')")
     public ResponseEntity prenotaVisitaFarmacia(@PathVariable @Valid Long idFarmacia,
                                                 @PathVariable @Valid Long idVisita,
@@ -100,6 +100,10 @@ public class GestioneFarmaciaController {
         }
     }
 
+    /*
+    forse va tolto?
+    se rimuovo dipendenti ma mi hanno prenotato delle visite che sfrutta quel dipendnete?
+     */
     @PutMapping("/{idFarmacia}/rimuoviDipendenti")
     @PreAuthorize("hasAuthority('gestore')")
     public ResponseEntity rimuoviDipendentiFarmacia(@PathVariable @Valid Long idFarmacia, @RequestBody @Valid Map<String,String> quantita) {

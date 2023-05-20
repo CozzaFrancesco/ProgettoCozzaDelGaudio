@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 
 import java.time.LocalDate;
 
+import java.time.LocalTime;
 import java.util.List;
 import com.example.progettocozzadelgaudio.support.exception.PivaFarmaciaGiaEsistenteException;
 import com.example.progettocozzadelgaudio.entities.Carrello;
@@ -38,10 +39,12 @@ public class RegistrazioneService {
 
     private KeyCloak kc=new KeyCloak();
 
-
     //solo gestore
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
-    public Farmacia registraFarmacia(String nome, String indirizzo, double budget, String citta, String partitaIva, String password ) throws PivaFarmaciaGiaEsistenteException {
+    public Farmacia registraFarmacia(String nome, String indirizzo, double budget,
+                                     String citta, String partitaIva,
+                                     Integer numeroDipendneti, LocalTime orarioInizioVisite,
+                                     LocalTime orarioFineVisite,String password ) throws PivaFarmaciaGiaEsistenteException {
         if ( farmaciaRepository.existsByPartitaIva(partitaIva) || ! kc.registraFarmacia(nome,partitaIva,password) ) {
             throw new PivaFarmaciaGiaEsistenteException();
         }
@@ -51,6 +54,9 @@ public class RegistrazioneService {
         farmacia.setBudget(budget);
         farmacia.setCitta(citta);
         farmacia.setPartitaIva(partitaIva);
+        farmacia.setNumDipendenti(numeroDipendneti);
+        farmacia.setOrarioInizioVisite(orarioInizioVisite);
+        farmacia.setOrarioFineVisite(orarioFineVisite);
 
         Carrello carrello=new Carrello();
         farmacia.setCarrello(carrello);

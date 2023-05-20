@@ -15,5 +15,7 @@ public interface VisitaRepository extends JpaRepository<Visita,Integer> {
 
     Visita findById(Long id);
 
+    boolean existsByNome(String nome);
+
 
 }
