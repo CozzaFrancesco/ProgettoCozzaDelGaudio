@@ -19,16 +19,16 @@ import java.util.Collections;
 
 public class KeyCloak {
     Keycloak keycloak;
-    String username_admin = "admin";
-    String password_admin = "admin";
-   String nome_client = "amministratore";
+    String username_admin = "dio";
+    String password_admin = "dio";
+   String nome_client = "admin-client";
     String ruoloFarmacia = "farmacia";
     String ruoloGestore="gestore";
     String ruoloCliente="cliente";
-    String serverUrl = "http://localhost:8080/auth";
+    String serverUrl = "http://localhost:8080";
     String realm = "sistemaFarmaceutico-realm";
     String clientId = "admin-client";
-    String clientSecret = "rdOc9u6hf5eGYzfxa0tgqaUaP0m9IQdr";
+    //String clientSecret = "rdOc9u6hf5eGYzfxa0tgqaUaP0m9IQdr";
     
     private static boolean esisteGestore;
 
@@ -39,13 +39,13 @@ public class KeyCloak {
                 .realm(realm)
                 .grantType(OAuth2Constants.PASSWORD)
                 .clientId(clientId)
-                .clientSecret(clientSecret)
+                //.clientSecret(clientSecret)
                 .username(username_admin)
                 .password(password_admin)
                 .build();
     }
 
-    public boolean registraFarmacia( String nome, String partitaIva, String password ) {
+    public boolean registraFarmacia(String nome, String partitaIva, String password ) {
             try {
                 // Define user
                 UserRepresentation user = new UserRepresentation();
@@ -69,7 +69,7 @@ public class KeyCloak {
 
                 // Define password credential
                 CredentialRepresentation passwordCred = new CredentialRepresentation();
-                passwordCred.setTemporary(true);
+                passwordCred.setTemporary(false);
                 passwordCred.setType(CredentialRepresentation.PASSWORD);
                 passwordCred.setValue(password);
 
@@ -123,7 +123,7 @@ public class KeyCloak {
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
-            passwordCred.setTemporary(true);
+            passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(password);
 
@@ -176,7 +176,7 @@ public class KeyCloak {
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
-            passwordCred.setTemporary(true);
+            passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(password);
 

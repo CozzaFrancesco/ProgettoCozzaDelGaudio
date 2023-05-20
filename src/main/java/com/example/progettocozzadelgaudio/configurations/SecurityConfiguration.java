@@ -25,7 +25,9 @@ public class SecurityConfiguration /*extends WebSecurityConfigurerAdapter*/ {
         @Bean
         public SecurityFilterChain configure(HttpSecurity http) throws Exception{
             http
-                    .csrf((csrf)-> csrf.disable()).authorizeHttpRequests((auth)->  auth.anyRequest().authenticated() )
+                    .csrf((csrf)-> csrf.disable()).authorizeHttpRequests((auth)->
+                            auth.requestMatchers("registrazione/*").permitAll()
+                                    .anyRequest().authenticated() )
                     .oauth2ResourceServer().jwt().jwtAuthenticationConverter(new JwtAuthenticationConverter());
             http
                 .sessionManagement()
