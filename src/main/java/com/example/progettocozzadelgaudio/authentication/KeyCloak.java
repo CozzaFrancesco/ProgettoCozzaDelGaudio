@@ -1,7 +1,5 @@
 package com.example.progettocozzadelgaudio.authentication;
 
-import com.example.progettocozzadelgaudio.entities.Farmacia;
-import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -217,6 +215,13 @@ public class KeyCloak {
 
     public boolean eliminaGestore(String email) {
         try{
+            if(! keycloak.realm(realm).users().search(email).get(0).getRealmRoles().contains(ruoloGestore))
+                return false;    /*
+                                se il possessore della mail non è il gestore,
+                                l'admin ha sbagliato e dunque l'eliminazione
+                                 fallisce
+                                 controllo supplemanatare può essere ignorato
+                                 */
             if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(email).get(0).getId()).getStatus()==204) {
                 esisteGestore=false;
                 return true;

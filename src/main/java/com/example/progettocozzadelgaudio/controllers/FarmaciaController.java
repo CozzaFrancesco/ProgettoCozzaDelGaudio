@@ -46,6 +46,24 @@ public class FarmaciaController {
         return new ResponseEntity(farmacia,HttpStatus.OK);
     }
 
+    @GetMapping("/visite")
+    @PreAuthorize("hasAuthority('farmacia')")
+    public ResponseEntity visualizzaVisiteFarmacia(){
+        return new ResponseEntity(farmaciaService.visualizzaVisiteOfferte(), HttpStatus.OK);
+    }
+
+    @GetMapping("/aggiungibili")
+    @PreAuthorize("hasAuthority('farmacia')")
+    public ResponseEntity visualizzaVisiteAggiungibiliFarmacia(){
+        return new ResponseEntity(farmaciaService.visualizzaVisiteAggiungibili(),HttpStatus.OK);
+    }
+
+    @PostMapping("/aggiungibili/{idVisita}")
+    @PreAuthorize("hasAuthority('farmacia')")
+    public ResponseEntity aggiungi(@PathVariable @Valid Long idVisita){
+        return new ResponseEntity(farmaciaService.aggiungiVisita(idVisita),HttpStatus.OK);
+    }
+
     @GetMapping("/appuntamentiPersonali/{data}")
     @PreAuthorize("hasAuthority('farmacia')")
     public ResponseEntity visualizzaAppuntamentiPerData(@PathVariable("data") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate data) {

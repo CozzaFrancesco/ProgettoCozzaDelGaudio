@@ -4,8 +4,10 @@ import com.example.progettocozzadelgaudio.authentication.Utils;
 import com.example.progettocozzadelgaudio.entities.Appuntamento;
 import com.example.progettocozzadelgaudio.entities.Farmacia;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
+import com.example.progettocozzadelgaudio.entities.Visita;
 import com.example.progettocozzadelgaudio.repositories.AppuntamentoRepository;
 import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
+import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
 import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,6 +32,9 @@ public class FarmaciaService {
 
     @Autowired
     private AppuntamentoRepository appuntamentoRepository;
+
+    @Autowired
+    private VisitaRepository visitaRepository;
 
     //solo gestore
     @Transactional
@@ -87,10 +92,36 @@ public class FarmaciaService {
     //solo farmacia
     @Transactional
     public Collection<Appuntamento> visualizzaAppuntamenti(int anno, int mese, int giorno) {
-        String emailFarmacia = Utils.getEmail();
-        StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
-        String partitaIva=st.nextToken();
-        Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
+        Farmacia farmacia=visualizzaFarmacia();
         return appuntamentoRepository.findByFarmaciaAndData(farmacia,LocalDate.of(anno,mese,giorno));
     }
+
+    @Transactional
+    public Collection<Visita> visualizzaVisiteOfferte(){
+        Farmacia farmacia=visualizzaFarmacia();
+        return farmacia.getVisite();
+    }
+
+    @Transactional
+    public Collection<Visita> visualizzaVisiteAggiungibili(){
+        Farmacia farmacia = visualizzaFarmacia();
+        Collection<Visita> visiteFarmacia= farmacia.getVisite();
+        Collection<Visita>  tutteLeVisite = visitaRepository.findAll();
+        Collection<Visita> ret= new ArrayList<>();
+        for(Visita v: tutteLeVisite)
+            if(!visiteFarmacia.contains(v))
+                ret.add(v);
+        return ret;
+    }
+
+    @Transactional
+    public Farmacia aggiungiVisita(Long idVisita){
+        Farmacia farmacia = visualizzaFarmacia();
+        Visita visita= visitaRepository.findById(idVisita);
+        if(!farmacia.getVisite().contains(visita))
+            farmacia.getVisite().add(visita);
+        farmaciaRepository.save(farmacia);
+        return farmacia;
+    }
+
 }

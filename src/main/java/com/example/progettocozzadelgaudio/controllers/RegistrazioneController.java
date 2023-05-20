@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
@@ -25,11 +26,15 @@ public class RegistrazioneController {
 
     @Autowired
     RegistrazioneService registrazioneService;
+
     @PostMapping("/farmacia")
     public ResponseEntity registraFarmacia(@RequestBody @Valid Map<String,String> loginMap ){
         try{
             Farmacia farmacia=registrazioneService.registraFarmacia(loginMap.get("nome"),loginMap.get("indirizzo"),
-                    Double.parseDouble(loginMap.get("budget")),loginMap.get("citta"),loginMap.get("partitaIva"),loginMap.get("password"));
+                    Double.parseDouble(loginMap.get("budget")),loginMap.get("citta"),
+                    loginMap.get("partitaIva"),Integer.parseInt(loginMap.get("numeroDipendenti")),
+                    LocalTime.parse(loginMap.get("orarioInizioVisita")),LocalTime.parse(loginMap.get("orarioFineVisita")),
+                    loginMap.get("password"));
             return new ResponseEntity<>(farmacia,HttpStatus.OK);
         }catch(PivaFarmaciaGiaEsistenteException e){
             return new ResponseEntity<>("ERROR_MAIL_PHARMACY_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
