@@ -20,7 +20,6 @@ public class Carrello {
         this.id = id;
     }
 
-
     @OneToOne(mappedBy = "carrello", optional = false)
     @JsonIgnore
     private Farmacia farmacia;

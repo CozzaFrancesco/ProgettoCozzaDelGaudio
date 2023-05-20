@@ -21,7 +21,7 @@ import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/Registrazione")
+@RequestMapping("/registrazione")
 public class RegistrazioneController {
 
     @Autowired

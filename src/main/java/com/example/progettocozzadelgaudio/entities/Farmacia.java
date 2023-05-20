@@ -27,7 +27,7 @@ public class Farmacia {
     }
 
     public void setNome(String nome) {
-        nome = nome;
+        this.nome = nome;
     }
 
     @Basic
@@ -38,10 +38,10 @@ public class Farmacia {
     }
 
     public void setIndirizzo(String indirizzo) {
-        indirizzo = indirizzo;
+        this.indirizzo = indirizzo;
     }
 
-    @OneToOne(optional = true)
+    @OneToOne
     private Magazzino magazzino;
 
     public Magazzino getMagazzino() {
@@ -49,7 +49,7 @@ public class Farmacia {
     }
 
     public void setMagazzino(Magazzino magazzino) {
-        magazzino = magazzino;
+        this.magazzino = magazzino;
     }
 
     @Basic

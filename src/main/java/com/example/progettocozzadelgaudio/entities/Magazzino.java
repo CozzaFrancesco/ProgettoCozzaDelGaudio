@@ -1,5 +1,6 @@
 package com.example.progettocozzadelgaudio.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Magazzino {
     }
 
     @OneToOne(mappedBy = "magazzino", optional = false)
+    @JsonIgnore
     private Farmacia farmacia;
 
     public Farmacia getFarmacia() {
