@@ -95,17 +95,17 @@ public class ClienteService {
         Collection<LocalTime> ret=new ArrayList<>();
         Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
         Visita visita= visitaRepository.findById(idVisita);
-        int durataVisita= visita.getDurata();
+        int durataVisita= visita.getDurata(); //in minuti
 
         Collection<Appuntamento> visiteInData = appuntamentoRepository.findByFarmaciaAndData(farmacia,data);
 
         LocalTime cursore=farmacia.getOrarioInizioVisite();
 
-        while(cursore.isBefore(farmacia.getOrarioFineVisite().minusMinutes(durataVisita))) {
+        while(cursore.compareTo(farmacia.getOrarioFineVisite().minusMinutes(durataVisita))<=0) {
             Collection<Appuntamento> visiteIR=visiteInRange(visiteInData,cursore,cursore.plusMinutes(durataVisita));
             if(visiteIR.size() < farmacia.getNumDipendenti()-1)
                 ret.add(cursore);
-            cursore=cursore.plusMinutes(durataVisita);
+            cursore=cursore.plusMinutes(durataVisita); //  qui gestire
         }
         return ret;
     }

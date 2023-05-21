@@ -44,7 +44,7 @@ public class RegistrazioneController {
     @PostMapping("/cliente")
     public ResponseEntity registraCliente(@RequestBody @Valid  Map<String,String> loginMap){
         try{
-            Cliente cliente=registrazioneService.registraCliente(loginMap.get("nome"),loginMap.get("cognome"),loginMap.get("codiceFiscale"),Integer.parseInt("giornoNascita"),Integer.parseInt(loginMap.get("meseNascita")),Integer.parseInt("annoNascita"),loginMap.get("citta"),loginMap.get("indirizzo"),loginMap.get("password"));
+            Cliente cliente=registrazioneService.registraCliente(loginMap.get("nome"),loginMap.get("cognome"),loginMap.get("codiceFiscale"),Integer.parseInt(loginMap.get("giornoNascita")),Integer.parseInt(loginMap.get("meseNascita")),Integer.parseInt(loginMap.get("annoNascita")),loginMap.get("citta"),loginMap.get("indirizzo"),loginMap.get("password"));
             return new ResponseEntity<>(cliente,HttpStatus.OK);
         }catch(CFClienteGiaEsistenteException e){
             return new ResponseEntity<>("ERROR_MAIL_USER_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);

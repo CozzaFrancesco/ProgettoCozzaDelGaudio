@@ -93,8 +93,8 @@ public class RegistrazioneService {
         cliente.setCodiceFiscale(codiceFiscale);
         cliente.setCitta(citta);
         cliente.setIndirizzo(indirizzo);
-        LocalDate date= LocalDate.of(annoNascita,meseNascita,giornoNascita);
-
+        LocalDate data= LocalDate.of(annoNascita,meseNascita,giornoNascita);
+        cliente.setDataNascita(data);
         return clienteRepository.save(cliente);
     }
 
