@@ -40,16 +40,20 @@ public class AppuntamentoService {
     private boolean eDisponibile(Farmacia farmacia, Visita visita, int anno, int mese, int giorno, int ora, int minuti) {
         LocalDate data=LocalDate.of(anno,mese,giorno);
         Collection<Appuntamento> listaApp=appuntamentoRepository.findByFarmaciaAndData(farmacia,data);
-        LocalTime orario=LocalTime.of(ora,minuti);
+        LocalTime inizio=LocalTime.of(ora,minuti);
+        LocalTime fine=inizio.plusMinutes(visita.getDurata());
 
         int contVisiteXorario=0;
 
         for(Appuntamento app:listaApp) {
             LocalTime orarioFineAppCorrente=app.getOrario().plusMinutes(app.getVisita().getDurata());
-            if(app.getOrario().isBefore(orario) && orarioFineAppCorrente.isAfter(orario))
+            if (app.getOrario().equals(inizio)
+                    || (app.getOrario().isAfter(inizio)) && orarioFineAppCorrente.isBefore(fine)
+                    || (app.getOrario().isBefore(inizio)) && ( orarioFineAppCorrente.isAfter(fine)
+                    || orarioFineAppCorrente.equals(fine)) )
                 contVisiteXorario++;
         }
-        if(contVisiteXorario > farmacia.getNumDipendenti()-1)
+        if(contVisiteXorario >= farmacia.getNumDipendenti()-1)
             return false;
         return true;
     }

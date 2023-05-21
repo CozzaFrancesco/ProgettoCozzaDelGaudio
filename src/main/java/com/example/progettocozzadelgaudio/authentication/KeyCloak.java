@@ -50,7 +50,7 @@ public class KeyCloak {
                 // Define user
                 UserRepresentation user = new UserRepresentation();
                 user.setEnabled(true);
-                user.setUsername(nome);
+                user.setUsername(nome);//meglio piva
                 user.setEmail(partitaIva+"@sistemaFarmaceutico.com");
 
                 user.setAttributes(Collections.singletonMap("origin" , Arrays.asList("demo")));
@@ -155,7 +155,7 @@ public class KeyCloak {
             // Define user
             UserRepresentation user = new UserRepresentation();
             user.setEnabled(true);
-            user.setUsername(nome+"."+cognome);
+            user.setUsername(nome+"."+cognome); //meglio il cdf, perchè se due username sono uguali si incazza
             user.setFirstName(nome);
             user.setLastName(cognome);
             user.setEmail(codiceFiscale+"@sistemaFarmaceutico.com");
