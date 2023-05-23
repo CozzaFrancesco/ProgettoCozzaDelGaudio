@@ -45,9 +45,10 @@ public class RegistrazioneService {
                                      String citta, String partitaIva,
                                      Integer numeroDipendneti, LocalTime orarioInizioVisite,
                                      LocalTime orarioFineVisite,String password ) throws PivaFarmaciaGiaEsistenteException {
-        if ( farmaciaRepository.existsByPartitaIva(partitaIva) || ! kc.registraFarmacia(nome,partitaIva,password) ) {
+
+        if ( farmaciaRepository.existsByPartitaIva(partitaIva) || ! kc.registraFarmacia(nome,partitaIva,password) )
             throw new PivaFarmaciaGiaEsistenteException();
-        }
+
         Farmacia farmacia=new Farmacia();
         farmacia.setNome(nome);
         farmacia.setIndirizzo(indirizzo);

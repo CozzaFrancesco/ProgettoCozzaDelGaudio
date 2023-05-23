@@ -21,7 +21,7 @@ public class Magazzino {
     }
 
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     private Collection<DettaglioMagazzino> dettaglioMagazzino=new ArrayList<>();
 
     public Collection<DettaglioMagazzino> getDettaglioMagazzino() {

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 public class Appuntamento {
+
     @Id
     @GeneratedValue
     private Long id;

@@ -3,7 +3,6 @@ package com.example.progettocozzadelgaudio.controllers;
 import com.example.progettocozzadelgaudio.services.EliminazioneService;
 import com.example.progettocozzadelgaudio.services.RegistrazioneService;
 import com.example.progettocozzadelgaudio.support.exception.GestoreGiaEsistenteException;
-import jakarta.persistence.Index;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

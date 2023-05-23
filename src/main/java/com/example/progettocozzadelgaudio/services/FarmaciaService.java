@@ -11,6 +11,7 @@ import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
 import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.time.LocalTime;
+import java.util.*;
 
 @Service
 public class FarmaciaService {
@@ -83,10 +82,63 @@ public class FarmaciaService {
     @Transactional
     public Farmacia rimuoviDipendenti(Long idFarmacia, int dipendentiDaRimuovere) throws AggiornamentoFallitoException{
         Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
-        if(dipendentiDaRimuovere<0 || farmacia.getNumDipendenti()<=dipendentiDaRimuovere)
+
+        if(dipendentiDaRimuovere<0
+                || farmacia.getNumDipendenti()<=dipendentiDaRimuovere
+                || !ePossibileRimuovereDipendenti(farmacia,dipendentiDaRimuovere))
             throw new AggiornamentoFallitoException();
+
         farmacia.setNumDipendenti(farmacia.getNumDipendenti()-dipendentiDaRimuovere);
         return farmaciaRepository.save(farmacia);
+    }
+
+    private boolean ePossibileRimuovereDipendenti(Farmacia farmacia, int dipendentiDaRimuovere) {
+        //bisogna capire se, eliminando i dipendenti, qualche appuntamento rimane scoperto
+        LocalDate today=LocalDate.now();
+        Collection<Appuntamento> listaAppuntamenti=appuntamentoRepository.findByFarmaciaAndDataAfter(farmacia,today);
+
+        int dipendentiDopoRimozionePerVisite=farmacia.getNumDipendenti()-dipendentiDaRimuovere-1;
+
+        List<LocalDate> listaDate=new LinkedList<>();
+        for(Appuntamento app:listaAppuntamenti) {
+            if(!listaDate.contains(app.getData())) {
+                List<Appuntamento> appPerData=appuntamentoRepository.findByFarmaciaAndData(farmacia,app.getData());
+                if (!appuntamentiContemporaneiMassimiPerData(appPerData,dipendentiDopoRimozionePerVisite))
+                    return false;
+                listaDate.add(app.getData());
+            }
+        }
+        return true;
+    }
+
+    private boolean appuntamentiContemporaneiMassimiPerData(List<Appuntamento> listaAppPerData, int dipendentiDopoRimozionePerVisite) {
+
+        for(int i=0;i<listaAppPerData.size();i++) {
+            int contContemporanei=0;
+            for(int j=0;j<listaAppPerData.size() && i!=j; j++)
+                if( sonoAppuntamentiContemporanei(listaAppPerData.get(i),listaAppPerData.get(j)))
+                    if(contContemporanei==0)
+                        contContemporanei=2;
+                    else
+                        contContemporanei++;
+            if(contContemporanei > dipendentiDopoRimozionePerVisite)
+                return false;
+        }
+        return true;
+    }
+
+    private boolean sonoAppuntamentiContemporanei(Appuntamento ap1, Appuntamento ap2) {
+        LocalTime inizioPrimoApp=ap1.getOrario();
+        LocalTime finePrimoApp=inizioPrimoApp.plusMinutes(ap1.getVisita().getDurata());
+
+        LocalTime inizioSecondoApp=ap2.getOrario();
+        LocalTime fineSecondoApp=inizioSecondoApp.plusMinutes(ap2.getVisita().getDurata());
+
+        if (inizioPrimoApp.equals(inizioSecondoApp)
+                || (inizioPrimoApp.isAfter(inizioSecondoApp)) && finePrimoApp.isBefore(fineSecondoApp)
+                || (inizioPrimoApp.isBefore(inizioSecondoApp)) && ( finePrimoApp.isAfter(fineSecondoApp) || finePrimoApp.equals(fineSecondoApp)))
+            return true;
+        return false;
     }
 
     //solo farmacia

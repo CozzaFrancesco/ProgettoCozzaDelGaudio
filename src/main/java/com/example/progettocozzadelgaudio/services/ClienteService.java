@@ -37,6 +37,8 @@ public class ClienteService {
     @Autowired
     private DettaglioMagazzinoRepository dettaglioMagazzinoRepository;
 
+    private static final int PASSO_STANDARD=30; //minuti standard di cui si muove il cursore
+
     @Transactional(readOnly = true)
     public List<Farmacia> visualizzaFarmacie(int numeroPagina, int dimensionePagina, String sortBy) {
         Pageable paging = PageRequest.of(numeroPagina, dimensionePagina, Sort.by(sortBy));
@@ -101,11 +103,13 @@ public class ClienteService {
 
         LocalTime cursore=farmacia.getOrarioInizioVisite();
 
+        int passo=Integer.min(durataVisita,PASSO_STANDARD);
+
         while(cursore.compareTo(farmacia.getOrarioFineVisite().minusMinutes(durataVisita))<=0) {
             Collection<Appuntamento> visiteIR=visiteInRange(visiteInData,cursore,cursore.plusMinutes(durataVisita));
             if(visiteIR.size() < farmacia.getNumDipendenti()-1)
                 ret.add(cursore);
-            cursore=cursore.plusMinutes(durataVisita); //  qui gestire
+            cursore=cursore.plusMinutes(passo);
         }
         return ret;
     }
@@ -114,6 +118,7 @@ public class ClienteService {
         Collection<Appuntamento> ret=new ArrayList<>();
         for(Appuntamento app:visiteInData) {
             LocalTime orarioFineAppCorrente=app.getOrario().plusMinutes(app.getVisita().getDurata());
+
             if (app.getOrario().equals(inizio)
                     || (app.getOrario().isAfter(inizio)) && orarioFineAppCorrente.isBefore(fine)
                     || (app.getOrario().isBefore(inizio)) && ( orarioFineAppCorrente.isAfter(fine) || orarioFineAppCorrente.equals(fine)) )

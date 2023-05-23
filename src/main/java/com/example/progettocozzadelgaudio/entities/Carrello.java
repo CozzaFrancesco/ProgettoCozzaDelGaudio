@@ -32,7 +32,7 @@ public class Carrello {
         this.farmacia = farmacia;
     }
 
-    @OneToMany
+    @OneToMany(fetch=FetchType.LAZY)
     private Collection<DettaglioCarrello> dettaglioCarrello = new ArrayList<>();
 
     public Collection<DettaglioCarrello> getDettaglioCarrello() {

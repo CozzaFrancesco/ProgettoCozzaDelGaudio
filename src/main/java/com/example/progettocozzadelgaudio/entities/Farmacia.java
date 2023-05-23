@@ -1,6 +1,8 @@
 package com.example.progettocozzadelgaudio.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +43,7 @@ public class Farmacia {
         this.indirizzo = indirizzo;
     }
 
-    @OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
     private Magazzino magazzino;
 
     public Magazzino getMagazzino() {
@@ -74,7 +76,7 @@ public class Farmacia {
         this.citta = citta;
     }
 
-    @OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
     private Carrello carrello;
 
     public Carrello getCarrello() {
