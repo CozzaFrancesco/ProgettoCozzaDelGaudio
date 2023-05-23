@@ -37,7 +37,8 @@ public class GestoreController {
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity resettaGestore(@RequestBody @Valid Map<String,String> resetMap) {
         try {
-            eliminazioneService.eliminaGestore(resetMap.get("emailVecchioGestore"));
+
+            eliminazioneService.eliminaGestore(resetMap.get("usernameVecchioGestore"));
             registrazioneService.registraGestore(resetMap.get("nome"),resetMap.get("email"),resetMap.get("password"));
             return new ResponseEntity(HttpStatus.OK);
         }catch(Exception e) {

@@ -36,8 +36,8 @@ public class EliminazioneService {
 
     //solo admin
     @Transactional
-    public void eliminaGestore(String email) throws GestoreInesistenteException {
-        if(!kc.eliminaGestore(email))
+    public void eliminaGestore(String username) throws GestoreInesistenteException {
+        if(!kc.eliminaGestore(username))
             throw new GestoreInesistenteException();
     }
 }
