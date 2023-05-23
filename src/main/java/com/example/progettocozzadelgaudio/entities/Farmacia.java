@@ -43,7 +43,7 @@ public class Farmacia {
         this.indirizzo = indirizzo;
     }
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne
     private Magazzino magazzino;
 
     public Magazzino getMagazzino() {
@@ -76,7 +76,7 @@ public class Farmacia {
         this.citta = citta;
     }
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne
     private Carrello carrello;
 
     public Carrello getCarrello() {

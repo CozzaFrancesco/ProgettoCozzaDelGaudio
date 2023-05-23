@@ -68,6 +68,7 @@ public class ProdottoService {
     public Prodotto trovaProdottoDaId(Long id) {
         return prodottoRepository.findById(id);
     }
+
     //solo gestore
     @Transactional
     public Prodotto aggiornaProdotto(Long id, Integer quantita, double prezzoUnitario) throws AggiornamentoFallitoException{
@@ -80,5 +81,7 @@ public class ProdottoService {
         prodotto.setQtaInStock(prodotto.getQtaInStock()+quantita);
         return prodottoRepository.save(prodotto);
     }
+
+    //TO-DO: Elimina prodotto
 
 }

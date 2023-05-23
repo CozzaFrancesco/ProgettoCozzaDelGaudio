@@ -1,5 +1,6 @@
 package com.example.progettocozzadelgaudio.controllers;
 
+import com.example.progettocozzadelgaudio.entities.Carrello;
 import com.example.progettocozzadelgaudio.entities.DettaglioCarrello;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 import com.example.progettocozzadelgaudio.services.AcquistoService;
@@ -28,7 +29,7 @@ public class CarrelloController {
     @GetMapping
     @PreAuthorize("hasAuthority('farmacia')")
     public ResponseEntity visualizzaCarrello() {
-        Collection<DettaglioCarrello> ret = carrelloService.visualizzaCarrello();
+        Carrello ret = carrelloService.visualizzaCarrello();
         return new ResponseEntity(ret,HttpStatus.OK);
     }
 

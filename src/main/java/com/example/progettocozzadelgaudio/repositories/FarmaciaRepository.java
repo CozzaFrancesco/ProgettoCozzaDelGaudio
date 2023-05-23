@@ -30,7 +30,7 @@ public interface FarmaciaRepository extends JpaRepository<Farmacia,Integer> {
 
     Farmacia findById(Long id);
 
-    @Lock(LockModeType.PESSIMISTIC_READ) //to do cambiare tutto quello che serve con questo
+    @Lock(LockModeType.PESSIMISTIC_READ)
     @Query("select f from Farmacia f where f.id=?1 ")
     Farmacia findByIdWithLock(Long id);
 

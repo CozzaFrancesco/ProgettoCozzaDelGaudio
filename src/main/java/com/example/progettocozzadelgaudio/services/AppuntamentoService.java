@@ -65,7 +65,7 @@ public class AppuntamentoService {
         String codiceFiscale=st.nextToken();
         Cliente cliente=clienteRepository.findByCodiceFiscale(codiceFiscale);
 
-        Farmacia farmacia= farmaciaRepository.findByIdWithLock(idFarmacia);
+        Farmacia farmacia= farmaciaRepository.findByIdWithLock(idFarmacia); //lock pessimistico
         Visita visita= visitaRepository.findById(idVisita);
 
         if(!eDisponibile(farmacia,visita,anno,mese,giorno,ora,minuti))

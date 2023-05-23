@@ -35,13 +35,12 @@ public class CarrelloService {
     @Autowired
     private CarrelloRepository carrelloRepository;
 
-    public Collection<DettaglioCarrello> visualizzaCarrello() {
+    public Carrello visualizzaCarrello() {
         String emailFarmacia = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
         String partitaIva=st.nextToken();
         Farmacia farmacia=farmaciaRepository.findByPartitaIva(partitaIva);
-        Carrello carrello=farmacia.getCarrello();
-        return carrello.getDettaglioCarrello();
+        return farmacia.getCarrello();
     }
 
     @Transactional
@@ -100,10 +99,17 @@ public class CarrelloService {
         while(it.hasNext() && !trovatoDC) {
             dc = it.next();
             if (dc.getProdotto().getId() == idProdotto) {
-                if(quantita > 0 && dc.getProdotto().getQtaInStock() < dc.getQuantita()+quantita)
-                    throw new QuantitaInsufficienteException();
-                dc.setQuantita(dc.getQuantita() + quantita);
-                trovatoDC=true;
+                if(quantita==0) { //vuoi eliminare dal carrello
+                    dc.setQuantita(quantita);
+                    trovatoDC=true;
+                }
+                else
+                    if(quantita > 0 && dc.getProdotto().getQtaInStock() < dc.getQuantita()+quantita)
+                        throw new QuantitaInsufficienteException();
+                    else {
+                        dc.setQuantita(dc.getQuantita() + quantita);
+                        trovatoDC = true;
+                }
             }
         }
 

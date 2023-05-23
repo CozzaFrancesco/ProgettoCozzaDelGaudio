@@ -2,6 +2,7 @@ package com.example.progettocozzadelgaudio.authentication;
 
 import com.example.progettocozzadelgaudio.entities.Farmacia;
 import com.example.progettocozzadelgaudio.repositories.FarmaciaRepository;
+import org.hibernate.engine.transaction.jta.platform.internal.SynchronizationRegistryBasedSynchronizationStrategy;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -72,7 +73,7 @@ public class KeyCloak {
 
                 // Define password credential
                 CredentialRepresentation passwordCred = new CredentialRepresentation();
-                passwordCred.setTemporary(true);
+                passwordCred.setTemporary(false);
                 passwordCred.setType(CredentialRepresentation.PASSWORD);
                 passwordCred.setValue(password);
 
@@ -126,7 +127,7 @@ public class KeyCloak {
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
-            passwordCred.setTemporary(true);
+            passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(password);
 
@@ -178,7 +179,7 @@ public class KeyCloak {
 
             // Define password credential
             CredentialRepresentation passwordCred = new CredentialRepresentation();
-            passwordCred.setTemporary(true);
+            passwordCred.setTemporary(false);
             passwordCred.setType(CredentialRepresentation.PASSWORD);
             passwordCred.setValue(password);
 
@@ -207,7 +208,7 @@ public class KeyCloak {
 
     public boolean eliminaFarmacia(String partitaIva) {
         try{
-            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(partitaIva+"sistemaFarmaceutico.com").get(0).getId()).getStatus()==204)
+            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(partitaIva).get(0).getId()).getStatus()==204)
                 return true;
             return false;
         } catch ( IndexOutOfBoundsException e ) {
@@ -215,12 +216,12 @@ public class KeyCloak {
         }
     }
 
-    public boolean eliminaGestore(String email) {
-        if(!esisteGestorePerMail(email))
+    public boolean eliminaGestore(String username) {
+        if(!esisteGestorePerUsername(username))
             return false;
         try{
 
-            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(email).get(0).getId()).getStatus()==204) {
+            if(keycloak.realm(realm).users().delete(keycloak.realm(realm).users().search(username).get(0).getId()).getStatus()==204) {
                 return true;
             }
             return false;
@@ -244,7 +245,7 @@ public class KeyCloak {
         return false;
     }
 
-    public boolean esisteGestorePerMail(String email) {
+    public boolean esisteGestorePerUsername(String username) {
         List<UserRepresentation> users = keycloak.realm(realm).users().list();
 
         for(UserRepresentation user: users) {
@@ -252,7 +253,7 @@ public class KeyCloak {
             ClientRepresentation clientRepresentation = keycloak.realm(realm).clients().findByClientId(clientId).get(0);
             List<RoleRepresentation> roles = userResource.roles().clientLevel(clientRepresentation.getId()).listAll();
             for(RoleRepresentation rr:roles) {
-                if (rr.getName().equals("gestore") && user.getEmail().equals(email))
+                if (rr.getName().equals("gestore") && user.getUsername().equals(username))
                     return true;
             }
         }
