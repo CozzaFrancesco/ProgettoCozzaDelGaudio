@@ -35,7 +35,7 @@ public class EliminazioneService {
     private KeyCloak kc=new KeyCloak();
 
     //solo admin
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = GestoreGiaEsistenteException.class)
     public void eliminaGestore(String username) throws GestoreInesistenteException {
         if(!kc.eliminaGestore(username))
             throw new GestoreInesistenteException();

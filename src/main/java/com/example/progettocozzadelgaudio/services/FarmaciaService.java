@@ -11,11 +11,6 @@ import com.example.progettocozzadelgaudio.repositories.VisitaRepository;
 import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.cglib.core.Local;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +31,17 @@ public class FarmaciaService {
     private VisitaRepository visitaRepository;
 
     //solo gestore
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = AggiornamentoFallitoException.class)
     public Farmacia aggiornaBudget(Long id, Double budgetAggiuntivo) throws AggiornamentoFallitoException {
         if(budgetAggiuntivo<0)
             throw new AggiornamentoFallitoException();
         Farmacia farmacia=farmaciaRepository.findById(id);
         farmacia.setBudget(farmacia.getBudget()+budgetAggiuntivo);
-        return farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
+        return farmacia;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Farmacia visualizzaFarmacia() {
         String emailFarmacia = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
@@ -54,32 +50,35 @@ public class FarmaciaService {
         return farmacia;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Farmacia modificaIndirizzoFarmacia(String nuovoIndirizzo) {
         Farmacia farmacia=visualizzaFarmacia();
         farmacia.setIndirizzo(nuovoIndirizzo);
-        return farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
+        return farmacia;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Farmacia modificaNomeFarmacia(String nuovoNome) {
         Farmacia farmacia=visualizzaFarmacia();
         farmacia.setNome(nuovoNome);
-        return farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
+        return farmacia;
     }
 
     //solo gestore
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = AggiornamentoFallitoException.class)
     public Farmacia aggiungiDipendenti(Long idFarmacia, int dipendentiDaAggiungere) throws AggiornamentoFallitoException{
         if(dipendentiDaAggiungere<0)
             throw new AggiornamentoFallitoException();
         Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
         farmacia.setNumDipendenti(farmacia.getNumDipendenti()+dipendentiDaAggiungere);
-        return farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
+        return farmacia;
     }
 
     //solo gestore
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = AggiornamentoFallitoException.class)
     public Farmacia rimuoviDipendenti(Long idFarmacia, int dipendentiDaRimuovere) throws AggiornamentoFallitoException{
         Farmacia farmacia= farmaciaRepository.findById(idFarmacia);
 
@@ -89,7 +88,8 @@ public class FarmaciaService {
             throw new AggiornamentoFallitoException();
 
         farmacia.setNumDipendenti(farmacia.getNumDipendenti()-dipendentiDaRimuovere);
-        return farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
+        return farmacia;
     }
 
     private boolean ePossibileRimuovereDipendenti(Farmacia farmacia, int dipendentiDaRimuovere) {
@@ -142,19 +142,19 @@ public class FarmaciaService {
     }
 
     //solo farmacia
-    @Transactional
+    @Transactional(readOnly = true)
     public Collection<Appuntamento> visualizzaAppuntamenti(int anno, int mese, int giorno) {
         Farmacia farmacia=visualizzaFarmacia();
         return appuntamentoRepository.findByFarmaciaAndData(farmacia,LocalDate.of(anno,mese,giorno));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Collection<Visita> visualizzaVisiteOfferte(){
         Farmacia farmacia=visualizzaFarmacia();
         return farmacia.getVisite();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Collection<Visita> visualizzaVisiteAggiungibili(){
         Farmacia farmacia = visualizzaFarmacia();
         Collection<Visita> visiteFarmacia= farmacia.getVisite();
@@ -166,13 +166,13 @@ public class FarmaciaService {
         return ret;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Farmacia aggiungiVisita(Long idVisita){
         Farmacia farmacia = visualizzaFarmacia();
         Visita visita= visitaRepository.findById(idVisita);
         if(!farmacia.getVisite().contains(visita))
             farmacia.getVisite().add(visita);
-        farmaciaRepository.save(farmacia);
+        //farmaciaRepository.save(farmacia);
         return farmacia;
     }
 

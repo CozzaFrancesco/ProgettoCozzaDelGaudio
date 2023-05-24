@@ -58,7 +58,7 @@ public class AppuntamentoService {
         return true;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = AppuntamentoNonPiuDisponibileException.class)
     public Appuntamento creaAppuntamento(Long idFarmacia, Long idVisita, int anno, int mese, int giorno, int ora, int minuti ) throws AppuntamentoNonPiuDisponibileException {
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailCliente,"@");
@@ -81,7 +81,7 @@ public class AppuntamentoService {
         return appuntamentoRepository.save(appuntamento);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = AppuntamentoNonDisdicibileException.class)
     public void discidiAppuntamento(Long idAppuntamento) throws AppuntamentoNonDisdicibileException{
         LocalDate dataOdierna=LocalDate.now();
         Appuntamento appuntamento=appuntamentoRepository.findById(idAppuntamento);

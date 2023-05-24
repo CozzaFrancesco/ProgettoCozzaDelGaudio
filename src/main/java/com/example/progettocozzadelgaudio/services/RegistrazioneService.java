@@ -40,7 +40,7 @@ public class RegistrazioneService {
     private KeyCloak kc=new KeyCloak();
 
     //solo gestore
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = PivaFarmaciaGiaEsistenteException.class)
     public Farmacia registraFarmacia(String nome, String indirizzo, double budget,
                                      String citta, String partitaIva,
                                      Integer numeroDipendneti, LocalTime orarioInizioVisite,
@@ -75,6 +75,7 @@ public class RegistrazioneService {
     }
 
     //solo admin
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = GestoreGiaEsistenteException.class)
     public void registraGestore(String nome, String email, String password) throws GestoreGiaEsistenteException{
         if(! kc.registraGestore(nome,email,password)) {
             throw new GestoreGiaEsistenteException();
@@ -82,7 +83,7 @@ public class RegistrazioneService {
     }
 
     //solo gestore
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = CFClienteGiaEsistenteException.class)
     public Cliente registraCliente(String nome, String cognome, String codiceFiscale, int giornoNascita, int meseNascita, int annoNascita, String citta, String indirizzo, String password ) throws CFClienteGiaEsistenteException {
         if ( clienteRepository.existsByCodiceFiscale(codiceFiscale) || ! kc.registraCliente(nome,cognome,codiceFiscale,password) ) {
             throw new CFClienteGiaEsistenteException();

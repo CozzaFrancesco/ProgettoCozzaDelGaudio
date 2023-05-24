@@ -22,7 +22,7 @@ public class ProdottoService {
     private ProdottoRepository prodottoRepository;
 
     @Transactional(readOnly = true)
-    public List<Prodotto> mostraTuttiProdotti(int numeroPagina, int dimensionePagina, String sortBy) {
+    public List<Prodotto> visualizzaTuttiProdotti(int numeroPagina, int dimensionePagina, String sortBy) {
         Pageable paging = PageRequest.of(numeroPagina, dimensionePagina, Sort.by(sortBy));
         Page<Prodotto> pagedResult = prodottoRepository.findAll(paging);
         if ( pagedResult.hasContent() ) {
@@ -43,13 +43,13 @@ public class ProdottoService {
         return prodottoRepository.findByPrincipioAttivo(principioAttivo);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Prodotto> trovaProdottoConRicercaAvanzata(String nome, String principioAttivo, String formaFarmaceutica){
         return prodottoRepository.ricercaAvanzata(nome,principioAttivo,formaFarmaceutica);
     }
 
     //solo gestore
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = ProdottoGiaEsistenteException.class)
     public Prodotto aggiungiProdotto(String nome, String principioAttivo, double prezzoUnitario, String formaFarmaceutica, Integer qtaInStock) throws ProdottoGiaEsistenteException {
         if(prodottoRepository.existsByNomeAndFormaFarmaceutica(nome,formaFarmaceutica))
             throw new ProdottoGiaEsistenteException();
@@ -64,13 +64,13 @@ public class ProdottoService {
         return prodottoRepository.save(prodotto);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Prodotto trovaProdottoDaId(Long id) {
         return prodottoRepository.findById(id);
     }
 
     //solo gestore
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = AggiornamentoFallitoException.class)
     public Prodotto aggiornaProdotto(Long id, Integer quantita, double prezzoUnitario) throws AggiornamentoFallitoException{
 
         if(quantita < 0 || prezzoUnitario < 0)
@@ -79,7 +79,8 @@ public class ProdottoService {
         Prodotto prodotto= prodottoRepository.findByIdWithLock(id);
         prodotto.setPrezzoUnitario(prezzoUnitario);
         prodotto.setQtaInStock(prodotto.getQtaInStock()+quantita);
-        return prodottoRepository.save(prodotto);
+        //prodottoRepository.save(prodotto);
+        return prodotto;
     }
 
     //TO-DO: Elimina prodotto

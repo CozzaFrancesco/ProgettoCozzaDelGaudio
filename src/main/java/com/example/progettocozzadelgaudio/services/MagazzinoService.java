@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.StringTokenizer;
 
 @Service
+@Transactional(readOnly = true)
 public class MagazzinoService {
 
     @Autowired
@@ -32,14 +33,13 @@ public class MagazzinoService {
         return farmacia;
     }
 
-    @Transactional
+
     public Collection<DettaglioMagazzino> visualizzaMagazzino() {
         Farmacia farmacia=visualizzaFarmacia();
         Magazzino magazzino= farmacia.getMagazzino();
         return magazzino.getDettaglioMagazzino();
     }
 
-    @Transactional
     public Collection<DettaglioMagazzino> visualizzaMagazzinoPerPrincipioAttivo(String principioAttivo){
         Farmacia farmacia=visualizzaFarmacia();
         Magazzino magazzino= farmacia.getMagazzino();
@@ -51,7 +51,6 @@ public class MagazzinoService {
         return risultato;
     }
 
-    @Transactional
     public Collection<DettaglioMagazzino> visualizzaMagazzinoPerNome(String nome){
         Farmacia farmacia=visualizzaFarmacia();
         Magazzino magazzino= farmacia.getMagazzino();

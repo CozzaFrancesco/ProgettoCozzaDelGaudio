@@ -33,7 +33,7 @@ public class KeyCloak {
     String realm = "sistemaFarmaceutico-realm";
     String clientId = "admin-client";
 
-    //String clientSecret = "rdOc9u6hf5eGYzfxa0tgqaUaP0m9IQdr";
+    String clientSecret = "7F2SaVRzPa0g2Oezue0OXVe4l5kj3s4r";
 
     public KeyCloak() {
 
@@ -42,7 +42,7 @@ public class KeyCloak {
                 .realm(realm)
                 .grantType(OAuth2Constants.PASSWORD)
                 .clientId(clientId)
-                /*.clientSecret(clientSecret)*/
+                .clientSecret(clientSecret)
                 .username(username_admin)
                 .password(password_admin)
                 .build();

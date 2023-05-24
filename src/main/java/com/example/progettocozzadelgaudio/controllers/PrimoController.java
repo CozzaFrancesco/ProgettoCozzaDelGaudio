@@ -29,6 +29,7 @@ public class PrimoController {
         return registrazioneService.registraFarmacia("ciao","ciao",0.2,"ciao","ciao","ciao");
     }*/
 
+    /*
     @GetMapping("/ciao")
     public String ciao() {
         try {
@@ -37,7 +38,7 @@ public class PrimoController {
         return "ciao";
     }
 
-
+*/
     @PreAuthorize("hasAuthority('admin')")
     @GetMapping("/simple")
     public ResponseEntity check(){

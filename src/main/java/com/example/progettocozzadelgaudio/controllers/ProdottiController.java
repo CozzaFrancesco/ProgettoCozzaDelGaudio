@@ -4,6 +4,8 @@ import com.example.progettocozzadelgaudio.entities.Prodotto;
 import com.example.progettocozzadelgaudio.services.ProdottoService;
 import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import com.example.progettocozzadelgaudio.support.exception.ProdottoGiaEsistenteException;
+import jakarta.persistence.OptimisticLockException;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,14 @@ public class ProdottiController {
     @Autowired
     private ProdottoService prodottoService;
 
+    private static final int SOGLIA=5; //soglia per ritentare la transazione nel caso di coll
+
     @GetMapping
     @PreAuthorize("hasAuthority('farmacia') or hasAuthority('gestore')")
     public ResponseEntity visualizzaProdotti(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
                                              @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                              @RequestParam(value = "sortBy", defaultValue = "id") String sortBy) {
-        List<Prodotto> risultato = prodottoService.mostraTuttiProdotti(pageNumber, pageSize, sortBy);
+        List<Prodotto> risultato = prodottoService.visualizzaTuttiProdotti(pageNumber, pageSize, sortBy);
         return new ResponseEntity(risultato,HttpStatus.OK);
     }
 
@@ -63,11 +67,16 @@ public class ProdottiController {
     @PreAuthorize("hasAuthority('gestore')")
     public ResponseEntity modifica(@Valid @PathVariable("id") Long id,
                                    @Valid @RequestBody Map<String,String> modificaMap){
-        try {
-            return new ResponseEntity(prodottoService.aggiornaProdotto(id, Integer.parseInt(modificaMap.get("qta")),
-                    Double.parseDouble(modificaMap.get("prezzo"))),HttpStatus.OK);
-        }catch(AggiornamentoFallitoException e){
-            return new ResponseEntity("ERROR_UPDATING_FAILED",HttpStatus.BAD_REQUEST);
+        int cont=0;
+        while (cont<SOGLIA) {
+            try {
+                return new ResponseEntity(prodottoService.aggiornaProdotto(id, Integer.parseInt(modificaMap.get("qta")), Double.parseDouble(modificaMap.get("prezzo"))), HttpStatus.OK);
+            } catch (AggiornamentoFallitoException e) {
+                return new ResponseEntity("ERROR_UPDATING_FAILED", HttpStatus.BAD_REQUEST);
+            } catch (OptimisticLockException e) {
+                cont++;
+            }
         }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

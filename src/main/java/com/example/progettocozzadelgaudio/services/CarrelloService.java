@@ -35,6 +35,7 @@ public class CarrelloService {
     @Autowired
     private CarrelloRepository carrelloRepository;
 
+    @Transactional(readOnly = true)
     public Carrello visualizzaCarrello() {
         String emailFarmacia = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailFarmacia,"@");
@@ -43,12 +44,12 @@ public class CarrelloService {
         return farmacia.getCarrello();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = QuantitaInsufficienteException.class)
     public Carrello aggiungiAlCarrello(Long idProdotto, Integer quantita) throws QuantitaInsufficienteException{
         Prodotto prodotto=prodottoRepository.findById(idProdotto);
 
         if(prodotto.getQtaInStock()<quantita)
-            throw new QuantitaInsufficienteException();
+            throw new QuantitaInsufficienteException(prodotto.getId());
 
         boolean giaInCarrello=false;
         String emailFarmacia = Utils.getEmail();
@@ -74,14 +75,12 @@ public class CarrelloService {
             dc.setProdotto(prodotto);
             dc.setQuantita(quantita);
             carrello.getDettaglioCarrello().add(dc);
+            dettaglioCarrelloRepository.save(dc);
         }
-
-        dettaglioCarrelloRepository.save(dc);
-        return carrelloRepository.save(carrello);
-
+        return carrello;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = QuantitaInsufficienteException.class)
     public Carrello modificaCarrello(Long idProdotto, Integer quantita) throws QuantitaInsufficienteException{
         Prodotto prodotto=prodottoRepository.findById(idProdotto);
         boolean trovatoDC=false;
@@ -105,7 +104,7 @@ public class CarrelloService {
                 }
                 else
                     if(quantita > 0 && dc.getProdotto().getQtaInStock() < dc.getQuantita()+quantita)
-                        throw new QuantitaInsufficienteException();
+                        throw new QuantitaInsufficienteException(dc.getProdotto().getId());
                     else {
                         dc.setQuantita(dc.getQuantita() + quantita);
                         trovatoDC = true;
@@ -116,10 +115,9 @@ public class CarrelloService {
         if(dc.getQuantita()==0) {
             listaDC.remove(dc);
             dettaglioCarrelloRepository.delete(dc);
-            return carrelloRepository.save(carrello);
         }
-        dettaglioCarrelloRepository.save(dc);
-        return carrelloRepository.save(carrello);
+        //dettaglioCarrelloRepository.save(dc);
+        return carrello;
     }
 
 

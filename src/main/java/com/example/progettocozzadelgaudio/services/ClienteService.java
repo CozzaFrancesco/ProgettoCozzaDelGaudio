@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 @Service
+@Transactional(readOnly = true)
 public class ClienteService {
 
     @Autowired
@@ -39,7 +40,7 @@ public class ClienteService {
 
     private static final int PASSO_STANDARD=30; //minuti standard di cui si muove il cursore
 
-    @Transactional(readOnly = true)
+
     public List<Farmacia> visualizzaFarmacie(int numeroPagina, int dimensionePagina, String sortBy) {
         Pageable paging = PageRequest.of(numeroPagina, dimensionePagina, Sort.by(sortBy));
         Page<Farmacia> pagedResult = farmaciaRepository.findAll(paging);
@@ -51,7 +52,7 @@ public class ClienteService {
         }
     }
 
-    @Transactional
+
     public Collection<Farmacia> visualizzaFarmaciePerCitta(String citta) {
         List<Farmacia> risultato = farmaciaRepository.findAllByCitta(citta);
         if ( !risultato.isEmpty() ) {
@@ -62,13 +63,13 @@ public class ClienteService {
         }
     }
 
-    @Transactional
+
     public Magazzino visualizzaMagazzinoPerFarmacia(Long idFarmacia) {
         Farmacia farmacia=farmaciaRepository.findById(idFarmacia);
         return farmacia.getMagazzino();
     }
 
-    @Transactional
+
     public Collection<DettaglioMagazzino> visualizzaMagazzinoPerFarmaciaENomeProdotto(Long idFarmacia, String nome) {
         Farmacia farmacia=farmaciaRepository.findById(idFarmacia);
         Collection<DettaglioMagazzino> ret = new ArrayList<>();
@@ -79,13 +80,13 @@ public class ClienteService {
         return ret;
     }
 
-    @Transactional
+
     public Collection<Visita> visualizzaVisitePerFarmacia(Long idFarmacia) {
         Farmacia farmacia=farmaciaRepository.findById(idFarmacia);
         return farmacia.getVisite();
     }
 
-    @Transactional
+
     public Collection<LocalTime> visualizzaOrariDisponibiliPerVisitainFarmaciaEData(Long idFarmacia, Long idVisita,
                                                                                    int anno, int mese, int giorno)
                                                                                     throws DataNonValidaException {
@@ -127,7 +128,7 @@ public class ClienteService {
         return ret;
     }
 
-    @Transactional
+
     public Collection<Appuntamento> visualizzaAppuntamenti() {
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailCliente,"@");
@@ -136,7 +137,7 @@ public class ClienteService {
         return appuntamentoRepository.findByCliente(cliente);
     }
 
-    @Transactional
+
     public Cliente visualizzaCliente(){
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailCliente,"@");
@@ -144,24 +145,26 @@ public class ClienteService {
         return clienteRepository.findByCodiceFiscale(codiceFiscale);
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Cliente modificaCitta(String citta){
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailCliente,"@");
         String codiceFiscale=st.nextToken();
         Cliente cliente= clienteRepository.findByCodiceFiscale(codiceFiscale);
         cliente.setCitta(citta);
-        return clienteRepository.save(cliente);
+        //clienteRepository.save(cliente);
+        return cliente;
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public Cliente modificaIndirizzo(String indirizzo){
         String emailCliente = Utils.getEmail();
         StringTokenizer st=new StringTokenizer(emailCliente,"@");
         String codiceFiscale=st.nextToken();
         Cliente cliente= clienteRepository.findByCodiceFiscale(codiceFiscale);
         cliente.setIndirizzo(indirizzo);
-        return clienteRepository.save(cliente);
+        //clienteRepository.save(cliente);
+        return cliente;
     }
 }
 

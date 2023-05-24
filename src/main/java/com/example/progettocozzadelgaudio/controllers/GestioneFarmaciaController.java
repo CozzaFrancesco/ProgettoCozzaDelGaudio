@@ -6,6 +6,7 @@ import com.example.progettocozzadelgaudio.services.FarmaciaService;
 import com.example.progettocozzadelgaudio.support.exception.AggiornamentoFallitoException;
 import com.example.progettocozzadelgaudio.support.exception.AppuntamentoNonPiuDisponibileException;
 import com.example.progettocozzadelgaudio.support.exception.DataNonValidaException;
+import jakarta.persistence.PessimisticLockException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,6 +31,8 @@ public class GestioneFarmaciaController {
 
     @Autowired
     private AppuntamentoService appuntamentoService;
+
+    private static final int SOGLIA=5;
 
 
     //home page cliente e gestore
@@ -82,12 +85,17 @@ public class GestioneFarmaciaController {
                                                 @PathVariable @Valid Long idVisita,
                                                 @PathVariable("data") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate data,
                                                 @PathVariable("orario") @DateTimeFormat(pattern="hh:mm") LocalTime orario) {
+        int cont=0;
+        while(cont<SOGLIA)
         try{
             return new ResponseEntity(appuntamentoService.creaAppuntamento(idFarmacia,idVisita,data.getYear(),
                     data.getMonthValue(),data.getDayOfMonth(),orario.getHour(),orario.getMinute()),HttpStatus.OK);
         }catch(AppuntamentoNonPiuDisponibileException e){
             return new ResponseEntity("ERROR_BOOKING_UNAVAILABLE_",HttpStatus.BAD_REQUEST);
+        }catch(PessimisticLockException e) {
+            cont++;
         }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PutMapping("/{idFarmacia}/aggiungiDipendenti")

@@ -14,12 +14,12 @@ public class VisitaService {
 
     @Autowired
     VisitaRepository visitaRepository;
-    @Transactional
+    @Transactional(readOnly = true)
     public Collection<Visita> visualizzaTutte(){
         return visitaRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = false, rollbackFor = VisitaGiaEsistenteException.class)
     public Visita aggiungiVisita(Visita visita) throws VisitaGiaEsistenteException{
         if(visitaRepository.existsByNome(visita.getNome()))
             throw new VisitaGiaEsistenteException();
