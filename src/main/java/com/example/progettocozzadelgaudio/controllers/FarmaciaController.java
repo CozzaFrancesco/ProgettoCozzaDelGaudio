@@ -11,12 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Map;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/farmacia")
 public class FarmaciaController {
 

@@ -77,6 +77,7 @@ public class RegistrazioneService {
     //solo admin
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = GestoreGiaEsistenteException.class)
     public void registraGestore(String nome, String email, String password) throws GestoreGiaEsistenteException{
+
         if(! kc.registraGestore(nome,email,password)) {
             throw new GestoreGiaEsistenteException();
         }
@@ -84,7 +85,7 @@ public class RegistrazioneService {
 
     //solo gestore
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = CFClienteGiaEsistenteException.class)
-    public Cliente registraCliente(String nome, String cognome, String codiceFiscale, int giornoNascita, int meseNascita, int annoNascita, String citta, String indirizzo, String password ) throws CFClienteGiaEsistenteException {
+    public Cliente registraCliente(String nome, String cognome, String codiceFiscale, LocalDate dataNascita, String citta, String indirizzo, String password ) throws CFClienteGiaEsistenteException {
         if ( clienteRepository.existsByCodiceFiscale(codiceFiscale) || ! kc.registraCliente(nome,cognome,codiceFiscale,password) ) {
             throw new CFClienteGiaEsistenteException();
         }
@@ -95,7 +96,7 @@ public class RegistrazioneService {
         cliente.setCodiceFiscale(codiceFiscale);
         cliente.setCitta(citta);
         cliente.setIndirizzo(indirizzo);
-        LocalDate data= LocalDate.of(annoNascita,meseNascita,giornoNascita);
+        LocalDate data= dataNascita;
         cliente.setDataNascita(data);
         return clienteRepository.save(cliente);
     }

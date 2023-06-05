@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/farmacie")
 public class GestioneFarmaciaController {
 

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/cliente")
 public class ClienteController {
 

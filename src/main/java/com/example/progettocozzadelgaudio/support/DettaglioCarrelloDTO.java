@@ -7,7 +7,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-
 public class DettaglioCarrelloDTO {
     private long idProdotto;
     private int quantita;

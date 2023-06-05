@@ -1,7 +1,6 @@
 package com.example.progettocozzadelgaudio.controllers;
 
 import com.example.progettocozzadelgaudio.entities.Carrello;
-import com.example.progettocozzadelgaudio.entities.DettaglioCarrello;
 import com.example.progettocozzadelgaudio.entities.Prodotto;
 import com.example.progettocozzadelgaudio.services.AcquistoService;
 import com.example.progettocozzadelgaudio.services.CarrelloService;
@@ -17,12 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Map;
 
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/carrello")
 public class CarrelloController {
 
